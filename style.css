@@ -1,0 +1,21 @@
+form#wpsc_dta_export_settings label {
+	padding: 1em 0.5em 0em 0em;
+	width: 10em;
+	float: left;
+	line-height: 1.5em;
+	font-size: 1em;
+	}
+	
+form#wpsc_dta_export_settings input, textarea, select {
+	margin: 1em 0.5em 0em 0.5em;
+	line-height: 1.5em;
+	}
+	
+form#wpsc_dta_export_settings select {
+	margin: 1em 1em 0em 0em;
+	line-height: 1.5em;
+	}
+	
+form#wpsc_dta_export_settings br {
+	clear: both;
+	}
