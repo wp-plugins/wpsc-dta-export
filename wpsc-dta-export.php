@@ -1,6 +1,7 @@
 <?php
 /*
 Plugin Name: WPSC DTA Export
+Plugin URI: http://wordpress.org/extend/plugins/wpsc-stock-counter/
 Description: Export Orders from Wordpress Shopping Cart [ <a href="http://www.instinct.co.nz">Instinct Entertainement</a> ] as DTA file.
 Version: 1.0
 Author: Kolja Schleich
