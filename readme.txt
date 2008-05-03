@@ -5,11 +5,11 @@ Requires at least: 2.3
 Tested up to: 2.5
 Stable tag: 1.0
 
-Export orders from the Instinct <http://www.instinct.co.nz WP e-Commerce> Plugin as DTA-File. This fileformat is used as automatic payment method in Germany.
+Export orders from the Instinct WP e-Commerce Plugin as DTA-File. This fileformat is used as automatic payment method in Germany.
 
 == Description ==
 
-Export orders from the Instinct <http://www.instinct.co.nz WP e-Commerce> Plugin as DTA File. This fileformat is used in Germany to exchange information about money transactions with banks or online banking programs. It uses the DTA class written by <http://www.web-gear.com/ Hermann Stainer>. It automatically remembers the last exported order to avoid double payments.
+Export orders from the Instinct WP e-Commerce Plugin as DTA File. This fileformat is used in Germany to exchange information about money transactions with banks or online banking programs. It uses the DTA class written by Hermann Stainer [http://www.web-gear.com/]. It automatically remembers the last exported order to avoid double payments.
 
 The plugin was tested with WP e-Commerce Version 3.5.1 and 3.6 RC2.
 
