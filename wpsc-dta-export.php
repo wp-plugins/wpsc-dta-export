@@ -2,8 +2,8 @@
 /*
 Plugin Name: WPSC DTA Export
 Plugin URI: http://wordpress.org/extend/plugins/wpsc-dta-export/
-Description: Export Orders from Wordpress Shopping Cart [ <a href="http://www.instinct.co.nz">Instinct Entertainement</a> ] as DTA file.
-Version: 1.0
+Description: Export Orders from <a href="http://www.instinct.co.nz">Wordpress Shopping Cart</a> as DTA file.
+Version: 1.1
 Author: Kolja Schleich
 */
 
@@ -163,7 +163,7 @@ class WPSC_DTA_Export
 		
 		$options = get_option( 'wpsc-dta-export' );
 		
-		if ( isset($_POST['update_dta_settings']) ) {
+		if ( isset($_POST['update_dta_settings']) && check_admin_referer( 'wpsc-dta-export-update-settings_general' ) && current_user_can( 'edit_dta_settings' ) ) {
 			$options['receiver']['name'] = $_POST['receiver_name'];
 			$options['receiver']['account_number'] = $_POST['receiver_account_number'];
 			$options['receiver']['bank_code'] = $_POST['receiver_bank_code'];
@@ -177,9 +177,8 @@ class WPSC_DTA_Export
 			echo '<div id="message" class="updated fade"><p><strong>'.__( 'Settings saved', 'wpsc-dta-export' ).'</strong></p></div>';
 		}
 			
-		if ( $options['receiver']['name'] == '' || $options['receiver']['account_number'] == '' || $options['receiver']['bank_code'] == '') {
+		if ( $options['receiver']['name'] == '' || $options['receiver']['account_number'] == '' || $options['receiver']['bank_code'] == '')
 			echo '<div id="message" class="error"><p><strong>'.__( "Before exporting a DTA File you need to complete the settings!", "wpsc-dta-export" ).'</strong></p></div>';
-		}
 		?>
 		<div class="wrap narrow">
 			<h2><?php _e( 'DTA Export', 'wpsc-dta-export' ) ?></h2>
@@ -189,11 +188,13 @@ class WPSC_DTA_Export
 			</form>
 			<p><?php _e( 'Last exported order', 'wpsc-dta-export' ) ?>: <?php echo $options['last_exported'] ?></p>
 		</div>
-			
+		
+		<?php if ( current_user_can( 'edit_dta_settings' ) ) : ?>
 		<div class="wrap">
 			<h2><?php _e( 'Settings', 'wpsc-dta-export' ) ?></h2>
 			
 			<form action="admin.php?page=wpsc-dta-export.php" method="post" id="wpsc_dta_export_settings">
+				<?php wp_nonce_field( 'wpsc-dta-export-update-settings_general' ) ?>
 				<h3><?php _e( 'Receiver', 'wpsc-dta-export' ) ?></h3>
 				<label for="receiver_name"><?php _e( 'Account Owner', 'wpsc-dta-export' ) ?></label><input type="text" id="name" name="receiver_name" value="<?php echo $options['receiver']['name'] ?>" /><br />
 				<label for="receiver_account_number"><?php _e( 'Account Number', 'wpsc-dta-export' ) ?></label><input type="text" id="account_number" name="receiver_account_number" value="<?php echo $options['receiver']['account_number'] ?>" /><br />
@@ -209,7 +210,7 @@ class WPSC_DTA_Export
 				<p class="submit"><input type="submit" value="<?php _e( 'Save Settings', 'wpsc-dta-export' ) ?> &raquo;" class="button" /></p>
 			</form>
 		</div>
-		<?php
+		<?php endif;
 	}
 
 
@@ -232,7 +233,7 @@ class WPSC_DTA_Export
 	 */
 	function addAdminMenu()
 	{
-		$mypage = add_submenu_page('wp-shopping-cart/display-log.php', 'DTA Export', 'DTA Export', 8, basename(__FILE__), array(&$this, 'printAdminPage'));
+		$mypage = add_submenu_page('wp-shopping-cart/display-log.php', 'DTA Export', 'DTA Export', 'export_dta', basename(__FILE__), array(&$this, 'printAdminPage'));
 		add_action( "admin_print_scripts-$mypage", array(&$this, 'addHeaderCode') );
 	}
 		
@@ -251,6 +252,15 @@ class WPSC_DTA_Export
 		$options['receiver']['bank_code'] = '';
 		
 		add_option( 'wpsc-dta-export', $options, 'DTA Export Options', 'yes' );
+		
+		/*
+		* Add Capability to export DTA Files and change DTA Settings
+		*/
+		$role = get_role('administrator');
+		$role->add_cap('export_dta');
+		$role->add_cap('edit_dta_settings');
+		
+		
 		return;
 	}
 }

@@ -12,57 +12,57 @@ msgstr ""
 
 #: wpsc-dta-export.php:136
 msgid "Order No:"
-msgstr "Bestell-Nr:"
+msgstr ""
 
 #: wpsc-dta-export.php:177
 msgid "Settings saved"
-msgstr "Einstellungen gespeichert"
+msgstr ""
 
 #: wpsc-dta-export.php:181
 msgid "Before exporting a DTA File you need to complete the settings!"
-msgstr "Vor dem exportieren einer DTA Datei müssen die Einstellungen gesetzt werden!"
+msgstr ""
 
 #: wpsc-dta-export.php:184,236
 msgid "DTA Export"
-msgstr "DTA Export"
+msgstr ""
 
 #: wpsc-dta-export.php:187
 msgid "Download DTA File"
-msgstr "DTA Datei herunterladen"
+msgstr ""
 
 #: wpsc-dta-export.php:189
 msgid "Last exported order"
-msgstr "Zuletzt exportierte Bestellung"
+msgstr ""
 
 #: wpsc-dta-export.php:194
 msgid "Settings"
-msgstr "Einstellungen"
+msgstr ""
 
 #: wpsc-dta-export.php:198
 msgid "Receiver"
-msgstr "Zahlungsempfänger"
+msgstr ""
 
 #: wpsc-dta-export.php:199,204
 msgid "Account Owner"
-msgstr "Kontoinhaber"
+msgstr ""
 
 #: wpsc-dta-export.php:200,206
 msgid "Account Number"
-msgstr "Konto-Nr"
+msgstr ""
 
 #: wpsc-dta-export.php:201,205
 msgid "Bank Code"
-msgstr "BLZ"
+msgstr ""
 
 #: wpsc-dta-export.php:203
 msgid "Payer"
-msgstr "Zahlungspflichtiger"
+msgstr ""
 
 #: wpsc-dta-export.php:207
 msgid "Usage"
-msgstr "Verwendungszweck"
+msgstr ""
 
 #: wpsc-dta-export.php:210
 msgid "Save Settings"
-msgstr "Einstellungen speichern"
+msgstr ""
 
