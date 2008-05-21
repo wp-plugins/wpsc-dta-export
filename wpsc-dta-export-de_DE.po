@@ -1,0 +1,68 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2008-04-23 20:18+0100\n"
+"Last-Translator: Kolja Schleich <kolja.schleich@googlemail.com>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Country: GERMANY\n"
+
+#: wpsc-dta-export.php:136
+msgid "Order No:"
+msgstr "Bestell-Nr:"
+
+#: wpsc-dta-export.php:177
+msgid "Settings saved"
+msgstr "Einstellungen gespeichert"
+
+#: wpsc-dta-export.php:181
+msgid "Before exporting a DTA File you need to complete the settings!"
+msgstr "Vor dem exportieren einer DTA Datei müssen die Einstellungen gesetzt werden!"
+
+#: wpsc-dta-export.php:184,236
+msgid "DTA Export"
+msgstr "DTA Export"
+
+#: wpsc-dta-export.php:187
+msgid "Download DTA File"
+msgstr "DTA Datei herunterladen"
+
+#: wpsc-dta-export.php:189
+msgid "Last exported order"
+msgstr "Zuletzt exportierte Bestellung"
+
+#: wpsc-dta-export.php:194
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: wpsc-dta-export.php:198
+msgid "Receiver"
+msgstr "Zahlungsempfänger"
+
+#: wpsc-dta-export.php:199,204
+msgid "Account Owner"
+msgstr "Kontoinhaber"
+
+#: wpsc-dta-export.php:200,206
+msgid "Account Number"
+msgstr "Konto-Nr"
+
+#: wpsc-dta-export.php:201,205
+msgid "Bank Code"
+msgstr "BLZ"
+
+#: wpsc-dta-export.php:203
+msgid "Payer"
+msgstr "Zahlungspflichtiger"
+
+#: wpsc-dta-export.php:207
+msgid "Usage"
+msgstr "Verwendungszweck"
+
+#: wpsc-dta-export.php:210
+msgid "Save Settings"
+msgstr "Einstellungen speichern"
+
