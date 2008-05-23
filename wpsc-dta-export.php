@@ -206,8 +206,7 @@ class WPSC_DTA_Export
 				<label for="payer_account_number"><?php _e( 'Account Number', 'wpsc-dta-export' ) ?></label><?php $this->printFormFieldSelection( 'payer_account_number', $options['payer']['account_number'] ) ?><br />
 				<label for="usage"><?php _e( 'Usage', 'wpsc-dta-export' ) ?></label><input type="text" name="usage" value="<?php echo $options['usage'] ?>" size="30" maxlength="27" />
 				
-				<input type="hidden" name="update_dta_settings" value="true" />
-				<p class="submit"><input type="submit" value="<?php _e( 'Save Settings', 'wpsc-dta-export' ) ?> &raquo;" class="button" /></p>
+				<p class="submit"><input type="submit" name="update_dta_settings" value="<?php _e( 'Save Settings', 'wpsc-dta-export' ) ?> &raquo;" class="button" /></p>
 			</form>
 		</div>
 		<?php endif;
@@ -233,7 +232,7 @@ class WPSC_DTA_Export
 	 */
 	function addAdminMenu()
 	{
-		$mypage = add_submenu_page('wp-shopping-cart/display-log.php', 'DTA Export', 'DTA Export', 'export_dta', basename(__FILE__), array(&$this, 'printAdminPage'));
+		$mypage = add_submenu_page('wp-shopping-cart/display-log.php', __( 'DTA Export', 'wpsc-dta-export' ), __( 'DTA Export', 'wpsc-dta-export' ), 'export_dta', basename(__FILE__), array(&$this, 'printAdminPage'));
 		add_action( "admin_print_scripts-$mypage", array(&$this, 'addHeaderCode') );
 	}
 		

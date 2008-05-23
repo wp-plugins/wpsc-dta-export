@@ -14,7 +14,8 @@ Export orders from the [WP e-Commerce Plugin](http://wordpress.org/extend/plugin
 The plugin was tested with WP e-Commerce Version 3.5.1 and 3.6.x.
 
 **Translations**
-The Plugin supports internationalization. A German translation is included in the main plugin files. For other translation files check out the [repository](http://dev.wp-plugins.org/browser/wpsc-dta-export/i18n/).
+
+* German
 
 == Installation ==
 
