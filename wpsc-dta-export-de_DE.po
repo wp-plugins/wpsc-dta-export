@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2008-04-23 20:18+0100\n"
+"PO-Revision-Date: 2008-05-22 13:53+0100\n"
 "Last-Translator: Kolja Schleich <kolja.schleich@googlemail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -22,7 +22,7 @@ msgstr "Einstellungen gespeichert"
 msgid "Before exporting a DTA File you need to complete the settings!"
 msgstr "Vor dem exportieren einer DTA Datei müssen die Einstellungen gesetzt werden!"
 
-#: wpsc-dta-export.php:184,236
+#: wpsc-dta-export.php:184,235
 msgid "DTA Export"
 msgstr "DTA Export"
 
@@ -62,7 +62,7 @@ msgstr "Zahlungspflichtiger"
 msgid "Usage"
 msgstr "Verwendungszweck"
 
-#: wpsc-dta-export.php:210
+#: wpsc-dta-export.php:209
 msgid "Save Settings"
 msgstr "Einstellungen speichern"
 

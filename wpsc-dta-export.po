@@ -22,7 +22,7 @@ msgstr ""
 msgid "Before exporting a DTA File you need to complete the settings!"
 msgstr ""
 
-#: wpsc-dta-export.php:184,236
+#: wpsc-dta-export.php:184,235
 msgid "DTA Export"
 msgstr ""
 
@@ -62,7 +62,6 @@ msgstr ""
 msgid "Usage"
 msgstr ""
 
-#: wpsc-dta-export.php:210
+#: wpsc-dta-export.php:209
 msgid "Save Settings"
 msgstr ""
-
