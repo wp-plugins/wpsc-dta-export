@@ -18,6 +18,14 @@ class WPSC_DTA_Export
 		
 		
 	/**
+	 * save form fields
+	 *
+	 * @var array
+	 */
+	var $form_fields = array();
+	
+	
+	/**
 	 * Constructor. Initialize DTA Class and set Account Sender data
 	 *
 	 * @param none
@@ -29,14 +37,14 @@ class WPSC_DTA_Export
 		
 		$this->plugin_url = get_bloginfo( 'wpurl' ).'/'.PLUGINDIR.'/'.basename(__FILE__, ".php");
 
-		$options = get_option( 'wpsc-dta-export' );
+		$this->options = get_option( 'wpsc-dta-export' );
 		$this->dta = new DTA(DTA_DEBIT);
 			
 		// Set file sender
 		$this->dta->setAccountFileSender(array(
-			"name" 			=> utf8_decode($options['receiver']['name']),
-			"bank_code"		=> $options['receiver']['bank_code'],
-			"account_number"	=> $options['receiver']['account_number'],
+			"name" 			=> utf8_decode($this->options['receiver']['name']),
+			"bank_code"		=> $this->options['receiver']['bank_code'],
+			"account_number"	=> $this->options['receiver']['account_number'],
 		));
 	}
 	function WPSC_DTA_Export()
@@ -54,8 +62,11 @@ class WPSC_DTA_Export
 	function getFormFields()
 	{
 		global $wpdb;
-		$form_fields = $wpdb->get_results( "SELECT `id`, `name` FROM `".$wpdb->prefix."collect_data_forms` WHERE `active` = '1' ORDER BY `order` ASC" );
-		return $form_fields;
+		
+		if ( count($this->form_fields) == 0 )
+			$this->form_fields = $wpdb->get_results( "SELECT `id`, `name` FROM `".$wpdb->prefix."collect_data_forms` WHERE `active` = '1' ORDER BY `order` ASC" );
+			
+		return $this->form_fields;
 	}
 	
 	
@@ -106,10 +117,9 @@ class WPSC_DTA_Export
 	{
 	 	global $wpdb;
 		
-		$options = get_option( 'wpsc-dta-export' );
 		$filename = 'DTAUS0.TXT';
 			
-		$last_exported = $options['last_exported'];
+		$last_exported = $this->options['last_exported'];
 			
 		$purchase_log = $wpdb->get_results( "SELECT id, totalprice FROM `".$wpdb->prefix."purchase_logs` WHERE id > '".$last_exported."'" );
 		
@@ -120,9 +130,9 @@ class WPSC_DTA_Export
 				
 			foreach ( $purchase_log AS $purchase ) {
 				if ( $this->getPurchaseData( $purchase->id ) ) {
-					$name = $this->purchase_data[$options['payer']['name']];
-					$bank_code = $this->purchase_data[$options['payer']['bank_code']];
-					$account_number = $this->purchase_data[$options['payer']['account_number']];
+					$name = $this->purchase_data[$this->options['payer']['name']];
+					$bank_code = $this->purchase_data[$this->options['payer']['bank_code']];
+					$account_number = $this->purchase_data[$this->options['payer']['account_number']];
 	
 					$this->dta->addExchange(
 						array(
@@ -161,8 +171,6 @@ class WPSC_DTA_Export
 	{
 		global $wpdb;
 		
-		$options = get_option( 'wpsc-dta-export' );
-		
 		if ( isset($_POST['update_dta_settings']) && check_admin_referer( 'wpsc-dta-export-update-settings_general' ) && current_user_can( 'edit_dta_settings' ) ) {
 			$options['receiver']['name'] = $_POST['receiver_name'];
 			$options['receiver']['account_number'] = $_POST['receiver_account_number'];
@@ -177,7 +185,7 @@ class WPSC_DTA_Export
 			echo '<div id="message" class="updated fade"><p><strong>'.__( 'Settings saved', 'wpsc-dta-export' ).'</strong></p></div>';
 		}
 			
-		if ( $options['receiver']['name'] == '' || $options['receiver']['account_number'] == '' || $options['receiver']['bank_code'] == '')
+		if ( $this->options['receiver']['name'] == '' || $this->options['receiver']['account_number'] == '' || $this->options['receiver']['bank_code'] == '')
 			echo '<div id="message" class="error"><p><strong>'.__( "Before exporting a DTA File you need to complete the settings!", "wpsc-dta-export" ).'</strong></p></div>';
 		?>
 		<div class="wrap narrow">
@@ -186,7 +194,7 @@ class WPSC_DTA_Export
 				<input type="hidden" name="export" value="dta" />
 				<p><input type="submit" value="<?php _e( 'Download DTA File', 'wpsc-dta-export' ) ?> &raquo;" class="button" /></p>
 			</form>
-			<p><?php _e( 'Last exported order', 'wpsc-dta-export' ) ?>: <?php echo $options['last_exported'] ?></p>
+			<p><?php _e( 'Last exported order', 'wpsc-dta-export' ) ?>: <?php echo $this->options['last_exported'] ?></p>
 		</div>
 		
 		<?php if ( current_user_can( 'edit_dta_settings' ) ) : ?>
@@ -196,15 +204,15 @@ class WPSC_DTA_Export
 			<form action="admin.php?page=wpsc-dta-export.php" method="post" id="wpsc_dta_export_settings">
 				<?php wp_nonce_field( 'wpsc-dta-export-update-settings_general' ) ?>
 				<h3><?php _e( 'Receiver', 'wpsc-dta-export' ) ?></h3>
-				<label for="receiver_name"><?php _e( 'Account Owner', 'wpsc-dta-export' ) ?></label><input type="text" id="name" name="receiver_name" value="<?php echo $options['receiver']['name'] ?>" /><br />
-				<label for="receiver_account_number"><?php _e( 'Account Number', 'wpsc-dta-export' ) ?></label><input type="text" id="account_number" name="receiver_account_number" value="<?php echo $options['receiver']['account_number'] ?>" /><br />
-				<label for="receiver_bank_code"><?php _e( 'Bank Code', 'wpsc-dta-export' ) ?></label><input type="text" id="bank_code" name="receiver_bank_code" value="<?php echo $options['receiver']['bank_code'] ?>" /><br />
+				<label for="receiver_name"><?php _e( 'Account Owner', 'wpsc-dta-export' ) ?></label><input type="text" id="name" name="receiver_name" value="<?php echo $this->options['receiver']['name'] ?>" /><br />
+				<label for="receiver_account_number"><?php _e( 'Account Number', 'wpsc-dta-export' ) ?></label><input type="text" id="account_number" name="receiver_account_number" value="<?php echo $this->options['receiver']['account_number'] ?>" /><br />
+				<label for="receiver_bank_code"><?php _e( 'Bank Code', 'wpsc-dta-export' ) ?></label><input type="text" id="bank_code" name="receiver_bank_code" value="<?php echo $this->options['receiver']['bank_code'] ?>" /><br />
 				
 				<h3><?php _e( 'Payer', 'wpsc-dta-export' ) ?></h3>
-				<label for="payer_name"><?php _e( 'Account Owner', 'wpsc-dta-export' ) ?></label><?php $this->printFormFieldSelection( 'payer_name', $options['payer']['name'] ) ?><br />
-				<label for="payer_bank_code"><?php _e( 'Bank Code', 'wpsc-dta-export' ) ?></label><?php $this->printFormFieldSelection( 'payer_bank_code', $options['payer']['bank_code'] ) ?><br />
-				<label for="payer_account_number"><?php _e( 'Account Number', 'wpsc-dta-export' ) ?></label><?php $this->printFormFieldSelection( 'payer_account_number', $options['payer']['account_number'] ) ?><br />
-				<label for="usage"><?php _e( 'Usage', 'wpsc-dta-export' ) ?></label><input type="text" name="usage" value="<?php echo $options['usage'] ?>" size="30" maxlength="27" />
+				<label for="payer_name"><?php _e( 'Account Owner', 'wpsc-dta-export' ) ?></label><?php $this->printFormFieldSelection( 'payer_name', $this->options['payer']['name'] ) ?><br />
+				<label for="payer_bank_code"><?php _e( 'Bank Code', 'wpsc-dta-export' ) ?></label><?php $this->printFormFieldSelection( 'payer_bank_code', $this->options['payer']['bank_code'] ) ?><br />
+				<label for="payer_account_number"><?php _e( 'Account Number', 'wpsc-dta-export' ) ?></label><?php $this->printFormFieldSelection( 'payer_account_number', $this->options['payer']['account_number'] ) ?><br />
+				<label for="usage"><?php _e( 'Usage', 'wpsc-dta-export' ) ?></label><input type="text" name="usage" value="<?php echo $this->options['usage'] ?>" size="30" maxlength="27" />
 				
 				<p class="submit"><input type="submit" name="update_dta_settings" value="<?php _e( 'Save Settings', 'wpsc-dta-export' ) ?> &raquo;" class="button" /></p>
 			</form>
