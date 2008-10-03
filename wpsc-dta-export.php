@@ -3,7 +3,7 @@
 Plugin Name: WPSC DTA Export
 Plugin URI: http://wordpress.org/extend/plugins/wpsc-dta-export/
 Description: Export Orders from <a href="http://www.instinct.co.nz">Wordpress Shopping Cart</a> as DTA file.
-Version: 1.1
+Version: 1.1.2
 Author: Kolja Schleich
 */
 
@@ -171,7 +171,9 @@ class WPSC_DTA_Export
 	{
 		global $wpdb;
 		
-		if ( isset($_POST['update_dta_settings']) && check_admin_referer( 'wpsc-dta-export-update-settings_general' ) && current_user_can( 'edit_dta_settings' ) ) {
+		if ( isset($_POST['update_dta_settings']) && current_user_can( 'edit_dta_settings' ) ) {
+			check_admin_referer( 'wpsc-dta-export-update-settings_general' );
+			
 			$options['receiver']['name'] = $_POST['receiver_name'];
 			$options['receiver']['account_number'] = $_POST['receiver_account_number'];
 			$options['receiver']['bank_code'] = $_POST['receiver_bank_code'];
@@ -270,6 +272,17 @@ class WPSC_DTA_Export
 		
 		return;
 	}
+	
+	
+	/**
+	 * Uninstall Plugin for WP 2.7
+	 *
+	 * @param none
+	 */
+	function uninstall()
+	{
+		delete_option( 'wpsc-dta-export' );
+	}
 }
 
 $wpsc_dta_export = new WPSC_DTA_Export();
@@ -280,7 +293,8 @@ $wpsc_dta_export = new WPSC_DTA_Export();
 if ( isset($_GET['export']) AND 'dta' == $_GET['export'] )
 	$wpsc_dta_export->getDTAFile();
 
-add_action( 'activate_wpsc-dta-export/wpsc-dta-export.php', array(&$wpsc_dta_export, 'init') );
+register_activation_hook(__FILE__, array(&$wpsc_dta_export, 'init') );
+//add_action( 'activate_wpsc-dta-export/wpsc-dta-export.php', array(&$wpsc_dta_export, 'init') );
 add_action( 'admin_menu', array(&$wpsc_dta_export, 'addAdminMenu') );
 
 load_plugin_textdomain( 'wpsc-dta-export', $path = PLUGINDIR.'/'.basename(__FILE__, ".php")  );
