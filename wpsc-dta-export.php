@@ -92,6 +92,12 @@ class WPSC_DTA_Export
 	}
 	
 	
+	/**
+	 * saves details of purchase in class
+	 *
+	 * @param int $purchase_id
+	 * @return boolean
+	 */
 	function getPurchaseData( $purchase_id )
 	{
 		global $wpdb;
@@ -166,6 +172,7 @@ class WPSC_DTA_Export
 	 * Print Admin Page
 	 *
 	 * @param none
+	 * @return void
 	 */
 	function printAdminPage()
 	{
@@ -227,6 +234,7 @@ class WPSC_DTA_Export
 	 * Add Code to Wordpress Header
 	 *
 	 * @param none
+	 * @return void
 	 */
 	function addHeaderCode()
 	{
@@ -238,7 +246,7 @@ class WPSC_DTA_Export
 	 * adds admin menu
 	 *
 	 * @param none
-	 * @return none
+	 * @return void
 	 */
 	function addAdminMenu()
 	{
@@ -251,6 +259,7 @@ class WPSC_DTA_Export
 	  * Initialize Plugin
 	  *
 	  * @param none
+	  * @return void
 	  */
 	function init()
 	{
@@ -268,9 +277,6 @@ class WPSC_DTA_Export
 		$role = get_role('administrator');
 		$role->add_cap('export_dta');
 		$role->add_cap('edit_dta_settings');
-		
-		
-		return;
 	}
 	
 	
@@ -278,6 +284,7 @@ class WPSC_DTA_Export
 	 * Uninstall Plugin for WP 2.7
 	 *
 	 * @param none
+	 * @return void
 	 */
 	function uninstall()
 	{
