@@ -215,18 +215,36 @@ class WPSC_DTA_Export
 		<div class="wrap">
 			<h2><?php _e( 'Settings', 'wpsc-dta-export' ) ?></h2>
 			
-			<form action="admin.php?page=wpsc-dta-export.php" method="post" id="wpsc_dta_export_settings">
+			<form action="admin.php?page=wpsc-dta-export.php" method="post">
 				<?php wp_nonce_field( 'wpsc-dta-export-update-settings_general' ) ?>
 				<h3><?php _e( 'Receiver', 'wpsc-dta-export' ) ?></h3>
-				<label for="receiver_name"><?php _e( 'Account Owner', 'wpsc-dta-export' ) ?></label><input type="text" id="name" name="receiver_name" value="<?php echo $this->options['receiver']['name'] ?>" /><br />
-				<label for="receiver_account_number"><?php _e( 'Account Number', 'wpsc-dta-export' ) ?></label><input type="text" id="account_number" name="receiver_account_number" value="<?php echo $this->options['receiver']['account_number'] ?>" /><br />
-				<label for="receiver_bank_code"><?php _e( 'Bank Code', 'wpsc-dta-export' ) ?></label><input type="text" id="bank_code" name="receiver_bank_code" value="<?php echo $this->options['receiver']['bank_code'] ?>" /><br />
+				<table class="form-table">
+				<tr valign="top">
+					<th scope="row"><label for="receiver_name"><?php _e( 'Account Owner', 'wpsc-dta-export' ) ?></label></th><td><input type="text" id="name" name="receiver_name" value="<?php echo $this->options['receiver']['name'] ?>" /></td>
+				</tr>
+				<tr valign="top">
+					<th scope="row"><label for="receiver_account_number"><?php _e( 'Account Number', 'wpsc-dta-export' ) ?></label></th><td><input type="text" id="account_number" name="receiver_account_number" value="<?php echo $this->options['receiver']['account_number'] ?>" /></td>
+				</tr>
+				<tr valign="top">
+					<th scope="row"><label for="receiver_bank_code"><?php _e( 'Bank Code', 'wpsc-dta-export' ) ?></label></th><td><input type="text" id="bank_code" name="receiver_bank_code" value="<?php echo $this->options['receiver']['bank_code'] ?>" /></td>
+				</tr>
+				</table>
 				
 				<h3><?php _e( 'Payer', 'wpsc-dta-export' ) ?></h3>
-				<label for="payer_name"><?php _e( 'Account Owner', 'wpsc-dta-export' ) ?></label><?php $this->printFormFieldSelection( 'payer_name', $this->options['payer']['name'] ) ?><br />
-				<label for="payer_bank_code"><?php _e( 'Bank Code', 'wpsc-dta-export' ) ?></label><?php $this->printFormFieldSelection( 'payer_bank_code', $this->options['payer']['bank_code'] ) ?><br />
-				<label for="payer_account_number"><?php _e( 'Account Number', 'wpsc-dta-export' ) ?></label><?php $this->printFormFieldSelection( 'payer_account_number', $this->options['payer']['account_number'] ) ?><br />
-				<label for="usage"><?php _e( 'Usage', 'wpsc-dta-export' ) ?></label><input type="text" name="usage" value="<?php echo $this->options['usage'] ?>" size="30" maxlength="27" />
+				<table class="form-table">
+				<tr valign="top">
+					<th scope="row"><label for="payer_name"><?php _e( 'Account Owner', 'wpsc-dta-export' ) ?></label></th><td><?php $this->printFormFieldSelection( 'payer_name', $this->options['payer']['name'] ) ?></td>
+				</tr>
+				<tr valign="top">
+					<th scope="row"><label for="payer_bank_code"><?php _e( 'Bank Code', 'wpsc-dta-export' ) ?></label></th><td><?php $this->printFormFieldSelection( 'payer_bank_code', $this->options['payer']['bank_code'] ) ?></td>
+				</tr>
+				<tr valign="top">
+					<th scope="row"><label for="payer_account_number"><?php _e( 'Account Number', 'wpsc-dta-export' ) ?></label></th><td><?php $this->printFormFieldSelection( 'payer_account_number', $this->options['payer']['account_number'] ) ?></td>
+				</tr>
+				<tr valign="top">
+					<th scope="row"><label for="usage"><?php _e( 'Usage', 'wpsc-dta-export' ) ?></label></th><td><input type="text" name="usage" value="<?php echo $this->options['usage'] ?>" size="30" maxlength="27" /></td>
+				</tr>
+				</table>
 				
 				<p class="submit"><input type="submit" name="update_dta_settings" value="<?php _e( 'Save Settings', 'wpsc-dta-export' ) ?> &raquo;" class="button" /></p>
 			</form>
