@@ -330,7 +330,7 @@ if ( isset($_GET['export']) AND 'dta' == $_GET['export'] )
 register_activation_hook(__FILE__, array(&$wpsc_dta_export, 'init') );
 add_action( 'admin_menu', array(&$wpsc_dta_export, 'addAdminMenu') );
 
-load_plugin_textdomain( 'wpsc-dta-export', $path = PLUGINDIR.'/'.basename(__FILE__, ".php").'/languages  );
+load_plugin_textdomain( 'wpsc-dta-export', $path = PLUGINDIR.'/'.basename(__FILE__, ".php").'/languages'  );
 
 // Uninstallation for WP 2.7
 if ( function_exists('register_uninstall_hook') )
