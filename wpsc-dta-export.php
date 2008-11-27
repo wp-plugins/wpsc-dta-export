@@ -3,7 +3,7 @@
 Plugin Name: WPSC DTA Export
 Plugin URI: http://wordpress.org/extend/plugins/wpsc-dta-export/
 Description: Export Orders from <a href="http://www.instinct.co.nz">Wordpress Shopping Cart</a> as DTA file.
-Version: 1.1.2
+Version: 1.2-testing
 Author: Kolja Schleich
 */
 
@@ -14,7 +14,7 @@ class WPSC_DTA_Export
 	 *
 	 * @var object
 	 */
-	var $dta;
+	private $dta;
 		
 		
 	/**
@@ -22,7 +22,7 @@ class WPSC_DTA_Export
 	 *
 	 * @var array
 	 */
-	var $form_fields = array();
+	private $form_fields = array();
 	
 	
 	/**
@@ -31,7 +31,7 @@ class WPSC_DTA_Export
 	 * @param none
 	 * @return void
 	 */
-	function __construct()
+	public function __construct()
 	{
 		require_once('lib/DTA.php');
 		
@@ -39,12 +39,8 @@ class WPSC_DTA_Export
 			define( 'WP_CONTENT_URL', get_option( 'siteurl' ) . '/wp-content' );
 		if ( !defined( 'WP_PLUGIN_URL' ) )
 			define( 'WP_PLUGIN_URL', WP_CONTENT_URL. '/plugins' );
-		if ( !defined( 'WP_CONTENT_DIR' ) )
-			define( 'WP_CONTENT_DIR', ABSPATH . 'wp-content' );
-		if ( !defined( 'WP_PLUGIN_DIR' ) )
-			define( 'WP_PLUGIN_DIR', WP_CONTENT_DIR . '/plugins' );
 			
-		$this->plugin_url = WP_PLUGIN_URL.'/'.basename(__FILE__, ".php");
+		$this->plugin_url = WP_PLUGIN_URL.'/'.plugin_basename(__FILE__);
 
 		$this->options = get_option( 'wpsc-dta-export' );
 		$this->dta = new DTA(DTA_DEBIT);
@@ -56,10 +52,6 @@ class WPSC_DTA_Export
 			"account_number"	=> $this->options['receiver']['account_number'],
 		));
 	}
-	function WPSC_DTA_Export()
-	{
-		$this->__construct();
-	}
 		
 	
 	/**
@@ -68,7 +60,7 @@ class WPSC_DTA_Export
 	 * @param none
 	 * @return array
 	 */
-	function getFormFields()
+	private function getFormFields()
 	{
 		global $wpdb;
 		
@@ -85,7 +77,7 @@ class WPSC_DTA_Export
 	 * @param string $form_name
 	 * @return string
 	 */
-	function getFormFieldSelection( $form_name, $select = 0 )
+	private function getFormFieldSelection( $form_name, $select = 0 )
 	{
 		$out = '<select size="1" name="'.$form_name.'" id="'.$form_name.'">';
 		foreach ( $this->getFormFields() AS $form_field ) {
@@ -95,7 +87,7 @@ class WPSC_DTA_Export
 		$out .= '</select>';
 		return $out;
 	}
-	function printFormFieldSelection( $form_name, $select = 0)
+	private function printFormFieldSelection( $form_name, $select = 0)
 	{
 		echo $this->getFormFieldSelection( $form_name, $select );
 	}
@@ -107,7 +99,7 @@ class WPSC_DTA_Export
 	 * @param int $purchase_id
 	 * @return boolean
 	 */
-	function getPurchaseData( $purchase_id )
+	private function getPurchaseData( $purchase_id )
 	{
 		global $wpdb;
 		$purchase_data = $wpdb->get_results( "SELECT `value`, `form_id` FROM `".$wpdb->prefix."submited_form_data` WHERE log_id = '".$purchase_id."' ORDER BY form_id ASC" );
@@ -128,7 +120,7 @@ class WPSC_DTA_Export
 	 * @param none
 	 * @return string
 	 */
-	function getDTAFile()
+	private function getDTAFile()
 	{
 	 	global $wpdb;
 		
@@ -136,7 +128,7 @@ class WPSC_DTA_Export
 			
 		$last_exported = $this->options['last_exported'];
 			
-		$purchase_log = $wpdb->get_results( "SELECT id, totalprice FROM `".$wpdb->prefix."purchase_logs` WHERE id > '".$last_exported."'" );
+		$purchase_log = $wpdb->get_results( "SELECT `id`, `totalprice` FROM `".$wpdb->prefix."purchase_logs` WHERE id > '".$last_exported."'" );
 		
 		if ( $purchase_log ) {
 			header('Content-Type: text/dta');
@@ -183,10 +175,13 @@ class WPSC_DTA_Export
 	 * @param none
 	 * @return void
 	 */
-	function printAdminPage()
+	public function printAdminPage()
 	{
 		global $wpdb;
 		
+		if ( isset($_GET['export']) AND 'dta' == $_GET['export'] )
+			$this->getDTAFile();
+	
 		if ( isset($_POST['update_dta_settings']) && current_user_can( 'edit_dta_settings' ) ) {
 			check_admin_referer( 'wpsc-dta-export-update-settings_general' );
 			
@@ -210,6 +205,7 @@ class WPSC_DTA_Export
 			<h2><?php _e( 'DTA Export', 'wpsc-dta-export' ) ?></h2>
 			<form action="index.php" method="get">
 				<input type="hidden" name="export" value="dta" />
+				<input type="hidden" name="page" value="<?php echo $_GET['page'] ?>" />
 				<p><input type="submit" value="<?php _e( 'Download DTA File', 'wpsc-dta-export' ) ?> &raquo;" class="button" /></p>
 			</form>
 			<p><?php _e( 'Last exported order', 'wpsc-dta-export' ) ?>: <?php echo $this->options['last_exported'] ?></p>
@@ -240,7 +236,7 @@ class WPSC_DTA_Export
 					<th scope="row"><label for="payer_name"><?php _e( 'Account Owner', 'wpsc-dta-export' ) ?></label></th><td><?php $this->printFormFieldSelection( 'payer_name', $this->options['payer']['name'] ) ?></td>
 				</tr>
 				<tr valign="top">
-					<th scope="row"><label for="payer_bank_code"><?php _e( 'Bank Code', 'wpsc-dta-export' ) ?></label></th><td><?php $this->printFormFieldSelection( 'payer_bank_code', $this->options['payer']['bank_code'] ) ?></td>
+					<th scope="row"><label for="payer_bank_code"><?php _e( 'Bank Code', 'wpsc-dta-export' ) ?></label></th><td><?php $thiUninstall Plugin for WP 2.7s->printFormFieldSelection( 'payer_bank_code', $this->options['payer']['bank_code'] ) ?></td>
 				</tr>
 				<tr valign="top">
 					<th scope="row"><label for="payer_account_number"><?php _e( 'Account Number', 'wpsc-dta-export' ) ?></label></th><td><?php $this->printFormFieldSelection( 'payer_account_number', $this->options['payer']['account_number'] ) ?></td>
@@ -263,7 +259,7 @@ class WPSC_DTA_Export
 	 * @param none
 	 * @return void
 	 */
-	function addHeaderCode()
+	public function addHeaderCode()
 	{
 		echo "<link rel='stylesheet' href='".$this->plugin_url."/style.css' type='text/css' />\n";
 	}
@@ -275,20 +271,36 @@ class WPSC_DTA_Export
 	 * @param none
 	 * @return void
 	 */
-	function addAdminMenu()
+	public function addAdminMenu()
 	{
 		$mypage = add_submenu_page('wp-shopping-cart/display-log.php', __( 'DTA Export', 'wpsc-dta-export' ), __( 'DTA Export', 'wpsc-dta-export' ), 'export_dta', basename(__FILE__), array(&$this, 'printAdminPage'));
 		add_action( "admin_print_scripts-$mypage", array(&$this, 'addHeaderCode') );
+		add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), array( &$this, 'pluginActions' ) );
 	}
 		
 		
-	 /**
-	  * Initialize Plugin
-	  *
-	  * @param none
-	  * @return void
-	  */
-	function init()
+	/**
+	 * pluginActions() - display link to settings page in plugin table
+	 *
+	 * @param array $links array of action links
+	 * @return void
+	 */
+	public public function pluginActions( $links )
+	{
+		$settings_link = '<a href="chcounter-widget.php">' . __('Settings') . '</a>';
+		array_unshift( $links, $settings_link );
+	
+		return $links;
+	}
+	
+	
+	/**
+	 * Initialize Plugin
+	 *
+	 * @param none
+	 * @return void
+	 */
+	public function init()
 	{
 		$options = array();
 		$options['last_exported'] = 0;
@@ -308,12 +320,12 @@ class WPSC_DTA_Export
 	
 	
 	/**
-	 * Uninstall Plugin for WP 2.7
+	 * Uninstall plugin
 	 *
 	 * @param none
 	 * @return void
 	 */
-	function uninstall()
+	public function uninstall()
 	{
 		delete_option( 'wpsc-dta-export' );
 	}
@@ -321,17 +333,10 @@ class WPSC_DTA_Export
 
 $wpsc_dta_export = new WPSC_DTA_Export();
 
-/*
-* Download DTA File
-*/
-if ( isset($_GET['export']) AND 'dta' == $_GET['export'] )
-	$wpsc_dta_export->getDTAFile();
-
 register_activation_hook(__FILE__, array(&$wpsc_dta_export, 'init') );
 add_action( 'admin_menu', array(&$wpsc_dta_export, 'addAdminMenu') );
 
-load_plugin_textdomain( 'wpsc-dta-export', $path = PLUGINDIR.'/'.basename(__FILE__, ".php").'/languages'  );
+load_plugin_textdomain( 'wpsc-dta-export', false, dirname(plugin_basename(__FILE__)).'/languages' );
 
-// Uninstallation for WP 2.7
 if ( function_exists('register_uninstall_hook') )
 	register_uninstall_hook(__FILE__, array(&$wpsc_dta_export, 'uninstall'));
