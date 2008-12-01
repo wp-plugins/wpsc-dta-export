@@ -273,7 +273,8 @@ class WPSC_DTA_Export
 	public function addAdminMenu()
 	{
 		$plugin = basename(__FILE__,'.php').'/'.basename(__FILE__);
-		$mypage = add_submenu_page('wp-shopping-cart/display-log.php', __( 'DTA Export', 'wpsc-dta-export' ), __( 'DTA Export', 'wpsc-dta-export' ), 'export_dta', basename(__FILE__), array(&$this, 'printAdminPage'));
+		$menu_title = "<img src='".$this->plugin_url."/icon.gif' alt='' /> ".__( 'DTA Export', 'wpsc-dta-export' );
+		$mypage = add_submenu_page('wp-shopping-cart/display-log.php', __( 'DTA Export', 'wpsc-dta-export' ), $menu_title, 'export_dta', basename(__FILE__), array(&$this, 'printAdminPage'));
 		add_action( "admin_print_scripts-$mypage", array(&$this, 'addHeaderCode') );
 		add_filter( 'plugin_action_links_' . $plugin, array( &$this, 'pluginActions' ) );
 	}
@@ -285,7 +286,7 @@ class WPSC_DTA_Export
 	 * @param array $links array of action links
 	 * @return void
 	 */
-	public public function pluginActions( $links )
+	public function pluginActions( $links )
 	{
 		$settings_link = '<a href="admin.php?page='.basename(__FILE__).'">' . __('Settings') . '</a>';
 		array_unshift( $links, $settings_link );
