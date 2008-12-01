@@ -1,67 +1,71 @@
+# wpsc-dta-export POT file.
+# Copyright (C) 2008 Kolja Schleich
+# This file is distributed under the same license as the WordPress package.
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/wpsc-dta-export\n"
-"POT-Creation-Date: 2008-11-20 16:25+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"POT-Creation-Date: 2008-12-01 14:28+0000\n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: wpsc-dta-export.php:161
+#: wpsc-dta-export.php:153
 msgid "Order No: "
 msgstr ""
 
-#: wpsc-dta-export.php:203
+#: wpsc-dta-export.php:197
 msgid "Settings saved"
 msgstr ""
 
-#: wpsc-dta-export.php:207
+#: wpsc-dta-export.php:201
 msgid "Before exporting a DTA File you need to complete the settings!"
 msgstr ""
 
-#: wpsc-dta-export.php:210 wpsc-dta-export.php:280
+#: wpsc-dta-export.php:204 wpsc-dta-export.php:276 wpsc-dta-export.php:277
 msgid "DTA Export"
 msgstr ""
 
-#: wpsc-dta-export.php:213
+#: wpsc-dta-export.php:207
 msgid "Download DTA File"
 msgstr ""
 
-#: wpsc-dta-export.php:215
+#: wpsc-dta-export.php:209
 msgid "Last exported order"
 msgstr ""
 
-#: wpsc-dta-export.php:220
+#: wpsc-dta-export.php:214 wpsc-dta-export.php:291
 msgid "Settings"
 msgstr ""
 
-#: wpsc-dta-export.php:224
+#: wpsc-dta-export.php:218
 msgid "Receiver"
 msgstr ""
 
-#: wpsc-dta-export.php:227 wpsc-dta-export.php:240
+#: wpsc-dta-export.php:221 wpsc-dta-export.php:234
 msgid "Account Owner"
 msgstr ""
 
-#: wpsc-dta-export.php:230 wpsc-dta-export.php:246
+#: wpsc-dta-export.php:224 wpsc-dta-export.php:240
 msgid "Account Number"
 msgstr ""
 
-#: wpsc-dta-export.php:233 wpsc-dta-export.php:243
+#: wpsc-dta-export.php:227 wpsc-dta-export.php:237
 msgid "Bank Code"
 msgstr ""
 
-#: wpsc-dta-export.php:237
+#: wpsc-dta-export.php:231
 msgid "Payer"
 msgstr ""
 
-#: wpsc-dta-export.php:249
+#: wpsc-dta-export.php:243
 msgid "Usage"
 msgstr ""
 
-#: wpsc-dta-export.php:253
+#: wpsc-dta-export.php:248
 msgid "Save Settings"
 msgstr ""
