@@ -125,7 +125,9 @@ class WPSC_DTA_Export
 	 	global $wpdb;
 		
 		$filename = 'DTAUS0.TXT';
-			
+		$this->error = false;
+		$this->options = get_option('wpsc-dta-export');
+	
 		$last_exported = $this->options['last_exported'];
 			
 		$purchase_log = $wpdb->get_results( "SELECT `id`, `totalprice` FROM `".$wpdb->prefix."purchase_logs` WHERE id > '".$last_exported."'" );
@@ -133,42 +135,56 @@ class WPSC_DTA_Export
 		if ( $purchase_log ) {
 			header('Content-Type: text/dta');
     			header('Content-Disposition: inline; filename="'.$filename.'"');
+			
 			$num_to_export = count($purchase_log);
 				
 			foreach ( $purchase_log AS $purchase ) {
 				if ( $this->getPurchaseData( $purchase->id ) ) {
 					$name = $this->purchase_data[$this->options['payer']['name']];
-					$bank_code = $this->purchase_data[$this->options['payer']['bank_code']];
-					$account_number = $this->purchase_data[$this->options['payer']['account_number']];
+					$bank_code = str_replace(' ', '', $this->purchase_data[$this->options['payer']['bank_code']]);
+					$account_number = str_replace(' ', '', $this->purchase_data[$this->options['payer']['account_number']]);
 	
-					$this->dta->addExchange(
-						array(
-							"name"			=> utf8_decode($name),
-							"bank_code"		=> $bank_code,
-							"account_number"	=> $account_number,
-						),
-						$purchase->totalprice,
-						array(
-							$options['usage'],
-							__( 'Order No: ', 'wpsc-dta-export' ).$purchase->id
-						)
-					);
+					$name = ereg_replace("ä","ae",$name);
+					$name = ereg_replace("Ä","Ae",$name);
+					$name = ereg_replace("ö","oe",$name);
+					$name = ereg_replace("Ö","Ue",$name);
+					$name = ereg_replace("ü","ue",$name);
+					$name = ereg_replace("Ü","Ue",$name);
+					$name = ereg_replace("ß","ss",$name);
+					
+					if (strlen($bank_code) > 8) $this->error = true;
+											
+					if ( !$this->error ) {
+						$this->dta->addExchange(
+							array(
+								"name"			=> $name,
+								"bank_code"		=> str_replace(' ', '', $bank_code),
+								"account_number"	=> str_replace(' ', '', $account_number),
+							),
+							$purchase->totalprice,
+							array(
+								$options['usage'],
+								__( 'Order No: ', 'wpsc-dta-export' ).$purchase->id
+							)
+						);
+					}
+					
+					$this->error = false;
 				}
 				unset($this->purchase_data);
 			}
 			
 			echo $this->dta->getFileContent();
-			
-			$options = $this->options;
+				
+			$options = get_option('wpsc-dta-export');
 			$options['last_exported'] = $purchase_log[$num_to_export-1]->id;
 			update_option( 'wpsc-dta-export', $options );
-				
 			exit();
 		} else {
 			return false;
 		}
 	}
-		
+	
 		
 	/**
 	 * Print Admin Page
@@ -180,6 +196,7 @@ class WPSC_DTA_Export
 	{
 		global $wpdb;
 		
+		$options = get_option('wpsc-dta-export');
 		if ( isset($_POST['update_dta_settings']) && current_user_can( 'edit_dta_settings' ) ) {
 			check_admin_referer( 'wpsc-dta-export-update-settings_general' );
 			
