@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2008-05-22 13:53+0100\n"
+"PO-Revision-Date: 2008-12-02 20:04+0100\n"
 "Last-Translator: Kolja Schleich <kolja.schleich@googlemail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -11,8 +11,8 @@ msgstr ""
 "X-Poedit-Country: GERMANY\n"
 
 #: wpsc-dta-export.php:136
-msgid "Order No:"
-msgstr "Bestell-Nr:"
+msgid "Put here a text for the order number. Use %d as placeholder."
+msgstr "Füge hier einen Text für die Bestell-Nr ein. Verwende %d als Platzhalter."
 
 #: wpsc-dta-export.php:177
 msgid "Settings saved"
@@ -31,8 +31,8 @@ msgid "Download DTA File"
 msgstr "DTA Datei herunterladen"
 
 #: wpsc-dta-export.php:189
-msgid "Last exported order"
-msgstr "Zuletzt exportierte Bestellung"
+msgid "Number of orders to export"
+msgstr "Anzahl zu exportierender Bestellungen"
 
 #: wpsc-dta-export.php:194
 msgid "Settings"

@@ -3,7 +3,7 @@
 Plugin Name: WPSC DTA Export
 Plugin URI: http://wordpress.org/extend/plugins/wpsc-dta-export/
 Description: Export Orders from <a href="http://www.instinct.co.nz">Wordpress Shopping Cart</a> as DTA file.
-Version: 1.2
+Version: 1.3
 Author: Kolja Schleich
 */
 
@@ -127,16 +127,12 @@ class WPSC_DTA_Export
 		$filename = 'DTAUS0.TXT';
 		$this->error = false;
 		$this->options = get_option('wpsc-dta-export');
-	
-		$last_exported = $this->options['last_exported'];
 			
-		$purchase_log = $wpdb->get_results( "SELECT `id`, `totalprice` FROM `".$wpdb->prefix."purchase_logs` WHERE id > '".$last_exported."'" );
+		$purchase_log = $wpdb->get_results( "SELECT `id`, `totalprice` FROM `".$wpdb->prefix."purchase_logs` WHERE `dta_export` = 0" );
 		
 		if ( $purchase_log ) {
 			header('Content-Type: text/dta');
     			header('Content-Disposition: inline; filename="'.$filename.'"');
-			
-			$num_to_export = count($purchase_log);
 				
 			foreach ( $purchase_log AS $purchase ) {
 				if ( $this->getPurchaseData( $purchase->id ) ) {
@@ -153,7 +149,7 @@ class WPSC_DTA_Export
 					$name = ereg_replace("ß","ss",$name);
 					
 					if (strlen($bank_code) > 8) $this->error = true;
-											
+										
 					if ( !$this->error ) {
 						$this->dta->addExchange(
 							array(
@@ -163,10 +159,12 @@ class WPSC_DTA_Export
 							),
 							$purchase->totalprice,
 							array(
-								$options['usage'],
-								__( 'Order No: ', 'wpsc-dta-export' ).$purchase->id
+								$this->options['usage'][0],
+								sprintf($this->options['usage'][1], $purchase->id)
 							)
 						);
+						
+						$wpdb->query( "UPDATE `".$wpdb->prefix."purchase_logs` SET `dta_export` = 1 WHERE `id` = {$purchase->id}" );
 					}
 					
 					$this->error = false;
@@ -175,10 +173,6 @@ class WPSC_DTA_Export
 			}
 			
 			echo $this->dta->getFileContent();
-				
-			$options = get_option('wpsc-dta-export');
-			$options['last_exported'] = $purchase_log[$num_to_export-1]->id;
-			update_option( 'wpsc-dta-export', $options );
 			exit();
 		} else {
 			return false;
@@ -206,7 +200,7 @@ class WPSC_DTA_Export
 			$options['payer']['name'] = $_POST['payer_name'];
 			$options['payer']['bank_code'] = $_POST['payer_bank_code'];
 			$options['payer']['account_number'] = $_POST['payer_account_number'];
-			$options['usage'] = $_POST['usage'];
+			$options['usage'] = array( $_POST['usage1'], $_POST['usage2'] );
 			
 			update_option( 'wpsc-dta-export', $options );
 			$this->options = $options;
@@ -216,6 +210,8 @@ class WPSC_DTA_Export
 		
 		if ( $this->options['receiver']['name'] == '' || $this->options['receiver']['account_number'] == '' || $this->options['receiver']['bank_code'] == '')
 			echo '<div id="message" class="error"><p><strong>'.__( "Before exporting a DTA File you need to complete the settings!", "wpsc-dta-export" ).'</strong></p></div>';
+			
+		$num_to_export = $wpdb->get_var( "SELECT COUNT(ID) FROM `".$wpdb->prefix."purchase_logs` WHERE `dta_export` = 0" );
 		?>
 		<div class="wrap narrow">
 			<h2><?php _e( 'DTA Export', 'wpsc-dta-export' ) ?></h2>
@@ -223,7 +219,7 @@ class WPSC_DTA_Export
 				<input type="hidden" name="export" value="dta" />
 				<p><input type="submit" value="<?php _e( 'Download DTA File', 'wpsc-dta-export' ) ?> &raquo;" class="button" /></p>
 			</form>
-			<p><?php _e( 'Last exported order', 'wpsc-dta-export' ) ?>: <?php echo $this->options['last_exported'] ?></p>
+			<p><?php _e( 'Number of orders to export', 'wpsc-dta-export' ) ?>: <?php echo $num_to_export ?></p>
 		</div>
 		
 		<?php if ( current_user_can( 'edit_dta_settings' ) ) : ?>
@@ -257,7 +253,10 @@ class WPSC_DTA_Export
 					<th scope="row"><label for="payer_account_number"><?php _e( 'Account Number', 'wpsc-dta-export' ) ?></label></th><td><?php $this->printFormFieldSelection( 'payer_account_number', $this->options['payer']['account_number'] ) ?></td>
 				</tr>
 				<tr valign="top">
-					<th scope="row"><label for="usage"><?php _e( 'Usage', 'wpsc-dta-export' ) ?></label></th><td><input type="text" name="usage" value="<?php echo $this->options['usage'] ?>" size="30" maxlength="27" /></td>
+					<th scope="row"><label for="usage"><?php _e( 'Usage', 'wpsc-dta-export' ) ?></label></th>
+					<td>
+						<input type="text" id="usage" name="usage1" value="<?php echo $this->options['usage'][0] ?>" size="30" maxlength="27" /><br/>
+						<input type="text" name="usage2" value="<?php echo $this->options['usage'][1] ?>" size="30" maxlength="27" /> <span><?php _e( 'Put here a text for the order number. Use %d as placeholder.', 'wpsc-dta-export' ) ?></span></td>
 				</tr>
 				</table>
 				
@@ -320,8 +319,10 @@ class WPSC_DTA_Export
 	 */
 	public function activate()
 	{
+		global $wpdb;
+		
 		$options = array();
-		$options['last_exported'] = 0;
+		//$options['last_exported'] = 0;
 		$options['receiver']['name'] = '';
 		$options['receiver']['account_number'] = '';
 		$options['receiver']['bank_code'] = '';
@@ -334,6 +335,9 @@ class WPSC_DTA_Export
 		$role = get_role('administrator');
 		$role->add_cap('export_dta');
 		$role->add_cap('edit_dta_settings');
+		
+		// Add field to save export status
+		$wpdb->query( "ALTER TABLE `".$wpdb->prefix."purchase_logs` ADD `dta_export` TINYINT NOT NULL" );
 	}
 	
 	
