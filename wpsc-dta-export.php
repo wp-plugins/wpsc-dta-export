@@ -288,11 +288,18 @@ class WPSC_DTA_Export
 	 */
 	public function addAdminMenu()
 	{
+		global $wp_version;
+		
 		$plugin = basename(__FILE__,'.php').'/'.basename(__FILE__);
-		$menu_title = "<img src='".$this->plugin_url."/icon.gif' alt='' /> ".__( 'DTA Export', 'wpsc-dta-export' );
+		if ( version_compare( $wp_version, '2.6.999', '>' ) )
+			$menu_title = "<img src='".$this->plugin_url."/icon.gif' alt='' /> ";
+		$menu_title .= __( 'DTA Export', 'wpsc-dta-export' );
+		
 		$mypage = add_submenu_page('wp-shopping-cart/display-log.php', __( 'DTA Export', 'wpsc-dta-export' ), $menu_title, 'export_dta', basename(__FILE__), array(&$this, 'printAdminPage'));
 		add_action( "admin_print_scripts-$mypage", array(&$this, 'addHeaderCode') );
-		add_filter( 'plugin_action_links_' . $plugin, array( &$this, 'pluginActions' ) );
+		
+		if ( version_compare( $wp_version, '2.6.999', '>' ) )
+			add_filter( 'plugin_action_links_' . $plugin, array( &$this, 'pluginActions' ) );
 	}
 		
 		
