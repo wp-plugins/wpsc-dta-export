@@ -154,8 +154,8 @@ class WPSC_DTA_Export
 						$this->dta->addExchange(
 							array(
 								"name"			=> $name,
-								"bank_code"		=> str_replace(' ', '', $bank_code),
-								"account_number"	=> str_replace(' ', '', $account_number),
+								"bank_code"		=> $bank_code,
+								"account_number"	=> $account_number,
 							),
 							$purchase->totalprice,
 							array(
@@ -288,12 +288,9 @@ class WPSC_DTA_Export
 	 */
 	public function addAdminMenu()
 	{
-		global $wp_version;
-		
 		$plugin = basename(__FILE__,'.php').'/'.basename(__FILE__);
-		if ( version_compare( $wp_version, '2.6.999', '>' ) )
-			$menu_title = "<img src='".$this->plugin_url."/icon.gif' alt='' /> ";
-		$menu_title .= __( 'DTA Export', 'wpsc-dta-export' );
+		//$menu_title = "<img src='".$this->plugin_url."/icon.gif' alt='' /> ".__( 'DTA Export', 'wpsc-dta-export' );
+		$menu_title = __( 'DTA Export', 'wpsc-dta-export' );
 		
 		$mypage = add_submenu_page('wp-shopping-cart/display-log.php', __( 'DTA Export', 'wpsc-dta-export' ), $menu_title, 'export_dta', basename(__FILE__), array(&$this, 'printAdminPage'));
 		add_action( "admin_print_scripts-$mypage", array(&$this, 'addHeaderCode') );
