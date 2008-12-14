@@ -137,9 +137,10 @@ class WPSC_DTA_Export
 			foreach ( $purchase_log AS $purchase ) {
 				if ( $this->getPurchaseData( $purchase->id ) ) {
 					$name = $this->purchase_data[$this->options['payer']['name']];
-					$bank_code = str_replace(' ', '', $this->purchase_data[$this->options['payer']['bank_code']]);
-					$account_number = str_replace(' ', '', $this->purchase_data[$this->options['payer']['account_number']]);
+					$bank_code = ereg_replace('[^0-9]', '', $this->purchase_data[$this->options['payer']['bank_code']]); // filter out all characters that are no numbers
+					$account_number = ereg_replace('[^0-9]', '', $this->purchase_data[$this->options['payer']['account_number']]); // filter out all characters that are no numbers
 	
+					// replace umlaute and ß
 					$name = ereg_replace("ä","ae",$name);
 					$name = ereg_replace("Ä","Ae",$name);
 					$name = ereg_replace("ö","oe",$name);
@@ -148,6 +149,7 @@ class WPSC_DTA_Export
 					$name = ereg_replace("Ü","Ue",$name);
 					$name = ereg_replace("ß","ss",$name);
 					
+					// ignore purchase if bank code is longer that 8 characters
 					if (strlen($bank_code) > 8) $this->error = true;
 										
 					if ( !$this->error ) {
