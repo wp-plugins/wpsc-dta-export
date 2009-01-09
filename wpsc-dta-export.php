@@ -265,18 +265,6 @@ class WPSC_DTA_Export
 		</div>
 		<?php endif;
 	}
-
-
-	/**
-	 * Add Code to Wordpress Header
-	 *
-	 * @param none
-	 * @return void
-	 */
-	public function addHeaderCode()
-	{
-		echo "<link rel='stylesheet' href='".$this->plugin_url."/style.css' type='text/css' />\n";
-	}
 	
 	
 	/**
@@ -338,8 +326,10 @@ class WPSC_DTA_Export
 		$role->add_cap('export_dta');
 		$role->add_cap('edit_dta_settings');
 		
-		// Add field to save export status
-		$wpdb->query( "ALTER TABLE `".$wpdb->prefix."purchase_logs` ADD `dta_export` TINYINT NOT NULL" );
+		// Add field to save export status if it doesn't exist
+		$cols = $wpdb->get_col( "SHOW COLUMNS FROM `".$wpdb->prefix."purchase_logs`" );
+		if (!in_array('dta_export', $cols))
+			$wpdb->query( "ALTER TABLE `".$wpdb->prefix."purchase_logs` ADD `dta_export` TINYINT NOT NULL" );
 	}
 	
 	
@@ -361,7 +351,6 @@ if ( isset($_GET['export']) AND 'dta' == $_GET['export'] )
 	$wpsc_dta_export->getDTAFile();
 
 register_activation_hook(__FILE__, array(&$wpsc_dta_export, 'activate') );
-add_action( 'admin_menu', array(&$wpsc_dta_export, 'addAdminMenu') );
 
 load_plugin_textdomain( 'wpsc-dta-export', false, basename(__FILE__, '.php').'/languages' );
 
