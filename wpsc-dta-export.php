@@ -351,6 +351,7 @@ if ( isset($_GET['export']) AND 'dta' == $_GET['export'] )
 	$wpsc_dta_export->getDTAFile();
 
 register_activation_hook(__FILE__, array(&$wpsc_dta_export, 'activate') );
+add_action( 'admin_menu', array(&$wpsc_dta_export, 'addAdminMenu') );
 
 load_plugin_textdomain( 'wpsc-dta-export', false, basename(__FILE__, '.php').'/languages' );
 
