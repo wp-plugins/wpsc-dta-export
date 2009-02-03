@@ -33,14 +33,9 @@ class WPSC_DTA_Export
 	 */
 	public function __construct()
 	{
-		require_once('lib/DTA.php');
-		
-		if ( !defined( 'WP_CONTENT_URL' ) )
-			define( 'WP_CONTENT_URL', get_option( 'siteurl' ) . '/wp-content' );
-		if ( !defined( 'WP_PLUGIN_URL' ) )
-			define( 'WP_PLUGIN_URL', WP_CONTENT_URL. '/plugins' );
-			
-		$this->plugin_url = WP_PLUGIN_URL.'/'.basename(__FILE__, '.php');
+		$this->initialize();
+
+		require_once(dirname (__FILE__) . '/lib/DTA.php');
 		$this->dta = new DTA(DTA_DEBIT);
 			
 		// Set file sender
@@ -53,10 +48,33 @@ class WPSC_DTA_Export
 		
 	
 	/**
-	 * gets formfields from database
+	* initialize plugin: define constants, register actions and hooks
+	*
+	* @param none
+	* @return void
+	*/
+	private function initialize()
+	{
+		if ( !defined( 'WP_CONTENT_URL' ) )
+			define( 'WP_CONTENT_URL', get_option( 'siteurl' ) . '/wp-content' );
+		if ( !defined( 'WP_PLUGIN_URL' ) )
+			define( 'WP_PLUGIN_URL', WP_CONTENT_URL. '/plugins' );
+			
+		register_activation_hook(__FILE__, array(&$this, 'activate') );
+		load_plugin_textdomain( 'wpsc-dta-export', false, basename(__FILE__, '.php').'/languages' );
+		add_action( 'admin_menu', array(&$this, 'addAdminMenu') );
+		if ( function_exists('register_uninstall_hook') )
+			register_uninstall_hook(__FILE__, array(&$this, 'uninstall'));
+			
+		$this->plugin_url = WP_PLUGIN_URL.'/'.basename(__FILE__, '.php');
+	}
+	
+	
+	/**
+	 * get formfields from database
 	 *
 	 * @param none
-	 * @return array
+	 * @return array of formfields
 	 */
 	private function getFormFields()
 	{
@@ -73,6 +91,7 @@ class WPSC_DTA_Export
 	 * gets selection form for form fields
 	 *
 	 * @param string $form_name
+	 * @param int $select selected option
 	 * @return string
 	 */
 	private function getFormFieldSelection( $form_name, $select = 0 )
@@ -92,7 +111,7 @@ class WPSC_DTA_Export
 	
 	
 	/**
-	 * saves details of purchase in class
+	 * get details of purchase
 	 *
 	 * @param int $purchase_id
 	 * @return boolean
@@ -113,7 +132,7 @@ class WPSC_DTA_Export
 	
 	
 	/**
-	 * gets DTA File
+	 * get DTA File
 	 *
 	 * @param none
 	 * @return string
@@ -181,7 +200,7 @@ class WPSC_DTA_Export
 	
 		
 	/**
-	 * Print Admin Page
+	 * print Admin Page
 	 *
 	 * @param none
 	 * @return void
@@ -268,7 +287,7 @@ class WPSC_DTA_Export
 	
 	
 	/**
-	 * adds admin menu
+	 * add admin menu
 	 *
 	 * @param none
 	 * @return void
@@ -276,8 +295,7 @@ class WPSC_DTA_Export
 	public function addAdminMenu()
 	{
 		$plugin = basename(__FILE__,'.php').'/'.basename(__FILE__);
-		//$menu_title = "<img src='".$this->plugin_url."/icon.gif' alt='' /> ".__( 'DTA Export', 'wpsc-dta-export' );
-		$menu_title = __( 'DTA Export', 'wpsc-dta-export' );
+		$menu_title = "<img src='".$this->plugin_url."/icon.gif' alt='' /> ".__( 'DTA Export', 'wpsc-dta-export' );
 		
 		$mypage = add_submenu_page('wp-shopping-cart/display-log.php', __( 'DTA Export', 'wpsc-dta-export' ), $menu_title, 'export_dta', basename(__FILE__), array(&$this, 'printAdminPage'));
 
@@ -286,10 +304,10 @@ class WPSC_DTA_Export
 		
 		
 	/**
-	 * pluginActions() - display link to settings page in plugin table
+	 * display link to settings page in plugin table
 	 *
 	 * @param array $links array of action links
-	 * @return void
+	 * @return new array of plugin actions
 	 */
 	public function pluginActions( $links )
 	{
@@ -311,7 +329,6 @@ class WPSC_DTA_Export
 		global $wpdb;
 		
 		$options = array();
-		//$options['last_exported'] = 0;
 		$options['receiver']['name'] = '';
 		$options['receiver']['account_number'] = '';
 		$options['receiver']['bank_code'] = '';
@@ -333,7 +350,7 @@ class WPSC_DTA_Export
 	
 	
 	/**
-	 * Uninstall plugin
+	 * uninstall plugin
 	 *
 	 * @param none
 	 * @return void
@@ -344,15 +361,10 @@ class WPSC_DTA_Export
 	}
 }
 
+// Run the plugin
 $wpsc_dta_export = new WPSC_DTA_Export();
 
+// Export DTA File
 if ( isset($_GET['export']) AND 'dta' == $_GET['export'] )
 	$wpsc_dta_export->getDTAFile();
 
-register_activation_hook(__FILE__, array(&$wpsc_dta_export, 'activate') );
-add_action( 'admin_menu', array(&$wpsc_dta_export, 'addAdminMenu') );
-
-load_plugin_textdomain( 'wpsc-dta-export', false, basename(__FILE__, '.php').'/languages' );
-
-if ( function_exists('register_uninstall_hook') )
-	register_uninstall_hook(__FILE__, array(&$wpsc_dta_export, 'uninstall'));
