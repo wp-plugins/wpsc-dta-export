@@ -1,7 +1,8 @@
 <?php
 /*
 Plugin Name: WPSC DTA Export
-Plugin URI: http://wordpress.org/extend/plugins/wpsc-dta-export/
+Author URI: http://kolja.galerie-neander.de
+Plugin URI: http://kolja.galerie-neander.de/plugins/#wpsc-dta-export
 Description: Export Orders from <a href="http://www.instinct.co.nz">Wordpress Shopping Cart</a> as DTA file.
 Version: 1.3
 Author: Kolja Schleich
