@@ -18,6 +18,8 @@ The plugin needs PHP 5+.
 
 * German
 
+Due to the growing popularity of my plugins I have launched a [website](http://kolja.galerie-neander.de/)!
+
 == Installation ==
 
 To install the plugin to the following steps
@@ -25,6 +27,8 @@ To install the plugin to the following steps
 1. Unzip the zip-file and upload the content to your Wordpress Plugin directory.
 2. Activiate the plugin via the admin plugin page.
 
+== Credits ==
+The WPSC DTA Export icon is adapted from the Fugue Icons of http://www.pinvoke.com/.
 
 == Screenshots ==
 1. Administration Page
