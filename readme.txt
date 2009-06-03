@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: shopping cart, tickets, shop, e-commerce, stock counter, DTA
 Requires at least: 2.5
 Tested up to: 2.7
-Stable tag: 1.3
+Stable tag: 1.3.1
 
 Export orders from [WP e-Commerce Plugin](http://wordpress.org/extend/plugins/wp-e-commerce/) as DTA-File. This fileformat is used as automatic payment method in Germany.
 
@@ -18,7 +18,6 @@ The plugin needs PHP 5+.
 
 * German
 
-Due to the growing popularity of my plugins I have launched a [website](http://kolja.galerie-neander.de/)!
 
 == Installation ==
 

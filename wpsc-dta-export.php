@@ -4,7 +4,7 @@ Plugin Name: WPSC DTA Export
 Author URI: http://kolja.galerie-neander.de
 Plugin URI: http://kolja.galerie-neander.de/plugins/#wpsc-dta-export
 Description: Export Orders from <a href="http://www.instinct.co.nz">Wordpress Shopping Cart</a> as DTA file.
-Version: 1.3
+Version: 1.3.1
 Author: Kolja Schleich
 */
 
@@ -214,13 +214,13 @@ class WPSC_DTA_Export
 		if ( isset($_POST['update_dta_settings']) && current_user_can( 'edit_dta_settings' ) ) {
 			check_admin_referer( 'wpsc-dta-export-update-settings_general' );
 			
-			$options['receiver']['name'] = $_POST['receiver_name'];
-			$options['receiver']['account_number'] = $_POST['receiver_account_number'];
-			$options['receiver']['bank_code'] = $_POST['receiver_bank_code'];
-			$options['payer']['name'] = $_POST['payer_name'];
-			$options['payer']['bank_code'] = $_POST['payer_bank_code'];
-			$options['payer']['account_number'] = $_POST['payer_account_number'];
-			$options['usage'] = array( $_POST['usage1'], $_POST['usage2'] );
+			$options['receiver']['name'] = (string)$_POST['receiver_name'];
+			$options['receiver']['account_number'] = (int)$_POST['receiver_account_number'];
+			$options['receiver']['bank_code'] = (int)$_POST['receiver_bank_code'];
+			$options['payer']['name'] = (int)$_POST['payer_name'];
+			$options['payer']['bank_code'] = (int)$_POST['payer_bank_code'];
+			$options['payer']['account_number'] = (int)$_POST['payer_account_number'];
+			$options['usage'] = array( (string)$_POST['usage1'], (string)$_POST['usage2'] );
 			
 			update_option( 'wpsc-dta-export', $options );
 	
