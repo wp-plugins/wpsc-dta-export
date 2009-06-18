@@ -3,14 +3,14 @@ Contributors: Kolja Schleich
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=2329191
 Tags: shopping cart, tickets, shop, e-commerce, stock counter, DTA
 Requires at least: 2.5
-Tested up to: 2.7
-Stable tag: 1.3.1
+Tested up to: 2.8
+Stable tag: 1.4
 
 Export orders from [WP e-Commerce Plugin](http://wordpress.org/extend/plugins/wp-e-commerce/) as DTA-File. This fileformat is used as automatic payment method in Germany.
 
 == Description ==
 
-Export orders from the [WP e-Commerce Plugin](http://wordpress.org/extend/plugins/wp-e-commerce/) as DTA File. This fileformat is used in Germany to exchange information about money transactions with banks or online banking programs. It uses the DTA class written by [Hermann Stainer](http://www.web-gear.com/). It automatically remembers the last exported order to avoid double payments.
+Export orders from the [WP e-Commerce Plugin](http://wordpress.org/extend/plugins/wp-e-commerce/) as DTA File. This fileformat is used in Germany to exchange information about money transactions with banks or online banking programs. It uses the DTA class written by [Hermann Stainer](http://www.web-gear.com/). It automatically remembers the last exported order to avoid double payments. Tested up to WP e-Commerce Version 3.6.12.
 
 The plugin needs PHP 5+.
 
