@@ -31,3 +31,7 @@ The WPSC DTA Export icon is adapted from the Fugue Icons of http://www.pinvoke.c
 
 == Screenshots ==
 1. Administration Page
+
+== Changelog == 
+
+None
