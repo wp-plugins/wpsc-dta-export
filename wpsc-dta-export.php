@@ -3,8 +3,8 @@
 Plugin Name: WPSC DTA Export
 Author URI: http://kolja.galerie-neander.de
 Plugin URI: http://kolja.galerie-neander.de/plugins/#wpsc-dta-export
-Description: Export Orders from <a href="http://www.instinct.co.nz">Wordpress Shopping Cart</a> as DTA file.
-Version: 1.4
+Description: Export Orders from <a href="http://www.instinct.co.nz">Wordpress Shopping Cart</a> as DTA file. Tested with wp-e-commerce 3.7.4
+Version: 1.5
 Author: Kolja Schleich
 */
 
@@ -82,7 +82,7 @@ class WPSC_DTA_Export
 		global $wpdb;
 		
 		if ( count($this->form_fields) == 0 )
-			$this->form_fields = $wpdb->get_results( "SELECT `id`, `name` FROM `".$wpdb->prefix."collect_data_forms` WHERE `active` = '1' ORDER BY `order` ASC" );
+			$this->form_fields = $wpdb->get_results( "SELECT `id`, `name` FROM `".$wpdb->prefix."wpsc_checkout_forms` WHERE `active` = '1' ORDER BY `order` ASC" );
 			
 		return $this->form_fields;
 	}
@@ -146,7 +146,7 @@ class WPSC_DTA_Export
 		$this->error = false;
 		$options = get_option('wpsc-dta-export');
 			
-		$purchase_log = $wpdb->get_results( "SELECT `id`, `totalprice` FROM `".$wpdb->prefix."purchase_logs` WHERE `dta_export` = 0" );
+		$purchase_log = $wpdb->get_results( "SELECT `id`, `totalprice` FROM `".$wpdb->prefix."wpsc_purchase_logs` WHERE `dta_export` = 0" );
 		
 		if ( $purchase_log ) {
 			header('Content-Type: text/dta');
@@ -184,7 +184,7 @@ class WPSC_DTA_Export
 							)
 						);
 						
-						$wpdb->query( "UPDATE `".$wpdb->prefix."purchase_logs` SET `dta_export` = 1 WHERE `id` = {$purchase->id}" );
+						$wpdb->query( "UPDATE `".$wpdb->prefix."wpsc_purchase_logs` SET `dta_export` = 1 WHERE `id` = {$purchase->id}" );
 					}
 					
 					$this->error = false;
@@ -230,7 +230,7 @@ class WPSC_DTA_Export
 		if ( $options['receiver']['name'] == '' || $options['receiver']['account_number'] == '' || $options['receiver']['bank_code'] == '')
 			echo '<div id="message" class="error"><p><strong>'.__( "Before exporting a DTA File you need to complete the settings!", "wpsc-dta-export" ).'</strong></p></div>';
 			
-		$num_to_export = $wpdb->get_var( "SELECT COUNT(ID) FROM `".$wpdb->prefix."purchase_logs` WHERE `dta_export` = 0" );
+		$num_to_export = $wpdb->get_var( "SELECT COUNT(ID) FROM `".$wpdb->prefix."wpsc_purchase_logs` WHERE `dta_export` = 0" );
 		?>
 		<div class="wrap narrow">
 			<h2><?php _e( 'DTA Export', 'wpsc-dta-export' ) ?></h2>
@@ -299,7 +299,7 @@ class WPSC_DTA_Export
 		//$menu_title = "<img src='".$this->plugin_url."/icon.png' alt='' /> ".;
 		$menu_title = __( 'DTA Export', 'wpsc-dta-export' );
 		
-		$mypage = add_submenu_page(WPSC_DIR_NAME.'/display-log.php', __( 'DTA Export', 'wpsc-dta-export' ), $menu_title, 'export_dta', basename(__FILE__), array(&$this, 'printAdminPage'));
+		$mypage = add_submenu_page('wpsc-sales-logs', __( 'DTA Export', 'wpsc-dta-export' ), $menu_title, 'export_dta', basename(__FILE__), array(&$this, 'printAdminPage'));
 
 		add_filter( 'plugin_action_links_' . $plugin, array( &$this, 'pluginActions' ) );
 	}
@@ -345,9 +345,9 @@ class WPSC_DTA_Export
 		$role->add_cap('edit_dta_settings');
 		
 		// Add field to save export status if it doesn't exist
-		$cols = $wpdb->get_col( "SHOW COLUMNS FROM `".$wpdb->prefix."purchase_logs`" );
+		$cols = $wpdb->get_col( "SHOW COLUMNS FROM `".$wpdb->prefix."wpsc_purchase_logs`" );
 		if (!in_array('dta_export', $cols))
-			$wpdb->query( "ALTER TABLE `".$wpdb->prefix."purchase_logs` ADD `dta_export` TINYINT NOT NULL" );
+			$wpdb->query( "ALTER TABLE `".$wpdb->prefix."wpsc_purchase_logs` ADD `dta_export` TINYINT NOT NULL" );
 	}
 	
 	
