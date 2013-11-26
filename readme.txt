@@ -1,6 +1,5 @@
 === WPSC DTA Export ===
 Contributors: Kolja Schleich
-Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=2329191
 Tags: shopping cart, tickets, shop, e-commerce, stock counter, DTA
 Requires at least: 2.5
 Tested up to: 2.8.4
