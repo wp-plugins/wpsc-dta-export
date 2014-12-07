@@ -3,7 +3,7 @@
 Plugin Name: WPSC DTA Export
 Plugin URI: http://wordpress.org/extend/plugins/wpsc-dta-export
 Description: Export Orders from <a href="https://wordpress.org/plugins/wp-e-commerce/">Wordpress Shopping Cart</a> as DTA file. Tested with WP E-commerce 3.9
-Version: 1.5
+Version: 1.6
 Author: Kolja Schleich
 Copyright 2007-2014  Kolja Schleich  (email : kolja [dot] schleich [at] googlemail.com)
 
