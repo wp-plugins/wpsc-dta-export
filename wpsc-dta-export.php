@@ -2,9 +2,24 @@
 /*
 Plugin Name: WPSC DTA Export
 Plugin URI: http://wordpress.org/extend/plugins/wpsc-dta-export
-Description: Export Orders from <a href="http://www.instinct.co.nz">Wordpress Shopping Cart</a> as DTA file. Tested with wp-e-commerce 3.7.4
+Description: Export Orders from <a href="https://wordpress.org/plugins/wp-e-commerce/">Wordpress Shopping Cart</a> as DTA file. Tested with WP E-commerce 3.9
 Version: 1.5
 Author: Kolja Schleich
+Copyright 2007-2014  Kolja Schleich  (email : kolja [dot] schleich [at] googlemail.com)
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 class WPSC_DTA_Export
@@ -33,28 +48,6 @@ class WPSC_DTA_Export
 	 */
 	public function __construct()
 	{
-		$this->initialize();
-
-		require_once(dirname (__FILE__) . '/lib/DTA.php');
-		$this->dta = new DTA(DTA_DEBIT);
-			
-		// Set file sender
-		$this->dta->setAccountFileSender(array(
-			"name" 			=> utf8_decode($this->options['receiver']['name']),
-			"bank_code"		=> $this->options['receiver']['bank_code'],
-			"account_number"	=> $this->options['receiver']['account_number'],
-		));
-	}
-		
-	
-	/**
-	* initialize plugin: define constants, register actions and hooks
-	*
-	* @param none
-	* @return void
-	*/
-	private function initialize()
-	{
 		if ( !defined( 'WP_CONTENT_URL' ) )
 			define( 'WP_CONTENT_URL', get_option( 'siteurl' ) . '/wp-content' );
 		if ( !defined( 'WP_PLUGIN_URL' ) )
@@ -68,7 +61,7 @@ class WPSC_DTA_Export
 			
 		$this->plugin_url = WP_PLUGIN_URL.'/'.basename(__FILE__, '.php');
 	}
-	
+
 	
 	/**
 	 * get formfields from database
@@ -81,7 +74,7 @@ class WPSC_DTA_Export
 		global $wpdb;
 		
 		if ( count($this->form_fields) == 0 )
-			$this->form_fields = $wpdb->get_results( "SELECT `id`, `name` FROM `".$wpdb->prefix."wpsc_checkout_forms` WHERE `active` = '1' ORDER BY `order` ASC" );
+			$this->form_fields = $wpdb->get_results( "SELECT `id`, `name` FROM `".$wpdb->prefix."wpsc_checkout_forms` WHERE `active` = '1' AND `type` != 'heading' ORDER BY `checkout_order` ASC" );
 			
 		return $this->form_fields;
 	}
@@ -119,7 +112,7 @@ class WPSC_DTA_Export
 	private function getPurchaseData( $purchase_id )
 	{
 		global $wpdb;
-		$purchase_data = $wpdb->get_results( "SELECT `value`, `form_id` FROM `".$wpdb->prefix."submited_form_data` WHERE log_id = '".$purchase_id."' ORDER BY form_id ASC" );
+		$purchase_data = $wpdb->get_results( "SELECT `value`, `form_id` FROM `".$wpdb->prefix."wpsc_submited_form_data` WHERE log_id = '".intval($purchase_id)."' ORDER BY form_id ASC" );
 		if ( $purchase_data ) {
 			foreach ( $purchase_data AS $data ) {
 				$this->purchase_data[$data->form_id] = $data->value;
@@ -144,18 +137,29 @@ class WPSC_DTA_Export
 		$filename = 'DTAUS0.TXT';
 		$this->error = false;
 		$options = get_option('wpsc-dta-export');
+		
+		require_once(dirname (__FILE__) . '/Payment_DTA-1.4.3/DTA.php');
+		$this->dta = new DTA(DTA_DEBIT);
 			
+		// Set file sender
+		$this->dta->setAccountFileSender(array(
+			"name" 			=> $options['receiver']['name'],
+			"bank_code"		=> $options['receiver']['bank_code'],
+			"account_number"	=> $options['receiver']['account_number'],
+		));
+		
 		$purchase_log = $wpdb->get_results( "SELECT `id`, `totalprice` FROM `".$wpdb->prefix."wpsc_purchase_logs` WHERE `dta_export` = 0" );
 		
 		if ( $purchase_log ) {
 			header('Content-Type: text/dta');
-    			header('Content-Disposition: inline; filename="'.$filename.'"');
+    		header('Content-Disposition: inline; filename="'.$filename.'"');
 				
 			foreach ( $purchase_log AS $purchase ) {
-				if ( $this->getPurchaseData( $purchase->id ) ) {
+				$purchase_id = intval($purchase->id);
+				if ( $this->getPurchaseData( $purchase_id ) ) {
 					$name = $this->purchase_data[$options['payer']['name']];
-					$bank_code = ereg_replace('[^0-9]', '', $this->purchase_data[$options['payer']['bank_code']]); // filter out all characters that are no numbers
-					$account_number = ereg_replace('[^0-9]', '', $this->purchase_data[$options['payer']['account_number']]); // filter out all characters that are no numbers
+					$bank_code = $this->purchase_data[$options['payer']['bank_code']];
+					$account_number = $this->purchase_data[$options['payer']['account_number']];
 	
 					// replace umlaute and ß
 					$name = ereg_replace("ä","ae",$name);
@@ -168,7 +172,9 @@ class WPSC_DTA_Export
 					
 					// ignore purchase if bank code is longer than 8 characters
 					if (strlen($bank_code) > 8) $this->error = true;
-										
+					if (!is_numeric($bank_code)) $this->error = true;
+					if (!is_numeric($account_number)) $this->error = true;
+											
 					if ( !$this->error ) {
 						$this->dta->addExchange(
 							array(
@@ -179,11 +185,11 @@ class WPSC_DTA_Export
 							$purchase->totalprice,
 							array(
 								$options['usage'][0],
-								sprintf($options['usage'][1], $purchase->id)
+								sprintf($options['usage'][1], $purchase_id)
 							)
 						);
 						
-						$wpdb->query( "UPDATE `".$wpdb->prefix."wpsc_purchase_logs` SET `dta_export` = 1 WHERE `id` = {$purchase->id}" );
+						$wpdb->query( "UPDATE `".$wpdb->prefix."wpsc_purchase_logs` SET `dta_export` = 1 WHERE `id` = {$purchase_id}" );
 					}
 					
 					$this->error = false;
@@ -208,18 +214,19 @@ class WPSC_DTA_Export
 	public function printAdminPage()
 	{
 		global $wpdb;
-		
+
 		$options = get_option('wpsc-dta-export');
 		if ( isset($_POST['update_dta_settings']) && current_user_can( 'edit_dta_settings' ) ) {
 			check_admin_referer( 'wpsc-dta-export-update-settings_general' );
 			
-			$options['receiver']['name'] = (string)$_POST['receiver_name'];
-			$options['receiver']['account_number'] = (int)$_POST['receiver_account_number'];
-			$options['receiver']['bank_code'] = (int)$_POST['receiver_bank_code'];
-			$options['payer']['name'] = (int)$_POST['payer_name'];
-			$options['payer']['bank_code'] = (int)$_POST['payer_bank_code'];
-			$options['payer']['account_number'] = (int)$_POST['payer_account_number'];
-			$options['usage'] = array( (string)$_POST['usage1'], (string)$_POST['usage2'] );
+			$options['receiver']['name'] = htmlspecialchars($_POST['receiver_name']);
+			$options['receiver']['account_number'] = intval($_POST['receiver_account_number']);
+			$options['receiver']['bank_code'] = intval($_POST['receiver_bank_code']);
+			$options['payer']['name'] = intval($_POST['payer_name']);
+			$options['payer']['bank_code'] = intval($_POST['payer_bank_code']);
+			$options['payer']['account_number'] = intval($_POST['payer_account_number']);
+			$options['payer']['iban'] = intval($_POST['payer_iban']);
+			$options['usage'] = array( htmlspecialchars($_POST['usage1']), htmlspecialchars($_POST['usage2']) );
 			
 			update_option( 'wpsc-dta-export', $options );
 	
@@ -271,6 +278,9 @@ class WPSC_DTA_Export
 					<th scope="row"><label for="payer_account_number"><?php _e( 'Account Number', 'wpsc-dta-export' ) ?></label></th><td><?php $this->printFormFieldSelection( 'payer_account_number', $options['payer']['account_number'] ) ?></td>
 				</tr>
 				<tr valign="top">
+					<th scope="row"><label for="payer_account_number"><?php _e( 'IBAN', 'wpsc-dta-export' ) ?></label></th><td><?php $this->printFormFieldSelection( 'payer_iban', $options['payer']['iban'] ) ?></td>
+				</tr>
+				<tr valign="top">
 					<th scope="row"><label for="usage"><?php _e( 'Usage', 'wpsc-dta-export' ) ?></label></th>
 					<td>
 						<input type="text" id="usage" name="usage1" value="<?php echo $options['usage'][0] ?>" size="30" maxlength="27" /><br/>
@@ -296,9 +306,9 @@ class WPSC_DTA_Export
 	{
 		$plugin = basename(__FILE__,'.php').'/'.basename(__FILE__);
 		//$menu_title = "<img src='".$this->plugin_url."/icon.png' alt='' /> ".;
-		$menu_title = __( 'DTA Export', 'wpsc-dta-export' );
+		$menu_title = __( 'Shop DTA Export', 'wpsc-dta-export' );
 		
-		$mypage = add_submenu_page('wpsc-sales-logs', __( 'DTA Export', 'wpsc-dta-export' ), $menu_title, 'export_dta', basename(__FILE__), array(&$this, 'printAdminPage'));
+		$mypage = add_options_page(__( 'Shop DTA Export', 'wpsc-dta-export' ), $menu_title, 'export_dta', basename(__FILE__), array(&$this, 'printAdminPage'));
 
 		add_filter( 'plugin_action_links_' . $plugin, array( &$this, 'pluginActions' ) );
 	}

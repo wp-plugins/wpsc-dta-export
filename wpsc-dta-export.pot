@@ -27,7 +27,7 @@ msgid "Before exporting a DTA File you need to complete the settings!"
 msgstr ""
 
 #: wpsc-dta-export.php:204 wpsc-dta-export.php:276 wpsc-dta-export.php:277
-msgid "DTA Export"
+msgid "Shop DTA Export"
 msgstr ""
 
 #: wpsc-dta-export.php:207
