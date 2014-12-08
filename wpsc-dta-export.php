@@ -112,12 +112,15 @@ class WPSC_DTA_Export
 	private function getPurchaseData( $purchase_id )
 	{
 		global $wpdb;
-		$purchase_data = $wpdb->get_results( "SELECT `value`, `form_id` FROM `".$wpdb->prefix."wpsc_submited_form_data` WHERE log_id = '".intval($purchase_id)."' ORDER BY form_id ASC" );
-		if ( $purchase_data ) {
-			foreach ( $purchase_data AS $data ) {
-				$this->purchase_data[$data->form_id] = $data->value;
+		$purchase_id = intval($purchase_id);
+		if ($purchase_id > 0) {
+			$purchase_data = $wpdb->get_results( "SELECT `value`, `form_id` FROM `".$wpdb->prefix."wpsc_submited_form_data` WHERE log_id = '".$purchase_id."' ORDER BY form_id ASC" );
+			if ( $purchase_data ) {
+				foreach ( $purchase_data AS $data ) {
+					$this->purchase_data[$data->form_id] = $data->value;
+				}
+				return true;
 			}
-			return true;
 		}
 		return false;
 		
@@ -189,7 +192,7 @@ class WPSC_DTA_Export
 							)
 						);
 						
-						$wpdb->query( "UPDATE `".$wpdb->prefix."wpsc_purchase_logs` SET `dta_export` = 1 WHERE `id` = {$purchase_id}" );
+						$wpdb->query( "UPDATE `".$wpdb->prefix."wpsc_purchase_logs` SET `dta_export` = 1 WHERE `id` = ".$purchase_id );
 					}
 					
 					$this->error = false;
