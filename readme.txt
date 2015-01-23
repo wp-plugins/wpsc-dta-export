@@ -3,7 +3,7 @@ Contributors: Kolja Schleich
 Tags: shopping cart, tickets, shop, e-commerce, stock counter, DTA
 Requires at least: 2.5
 Tested up to: 4.0.1
-Stable tag: 1.6
+Stable tag: 1.6.1
 
 Export orders from [WP E-Commerce Plugin](http://wordpress.org/extend/plugins/wp-e-commerce/) as DTA-File. This file format is used as automatic payment method in Germany.
 
@@ -35,6 +35,9 @@ The WPSC DTA Export icon is adapted from the Fugue Icons of http://www.pinvoke.c
 1. Administration Page
 
 == Changelog == 
+
+= 1.6.1 =
+* SECURITY FIX: fixed possible cross-site-scripting exploit
 
 = 1.6 =
 * NEW: Compatible with Wordpress 4.0.1 and WP E-Commerce 3.9

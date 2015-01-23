@@ -3,7 +3,7 @@
 Plugin Name: WPSC DTA Export
 Plugin URI: http://wordpress.org/extend/plugins/wpsc-dta-export
 Description: Export Orders from <a href="https://wordpress.org/plugins/wp-e-commerce/">Wordpress Shopping Cart</a> as DTA file. Tested with WP E-commerce 3.9
-Version: 1.6
+Version: 1.6.1
 Author: Kolja Schleich
 Copyright 2007-2014  Kolja Schleich  (email : kolja [dot] schleich [at] googlemail.com)
 
@@ -112,15 +112,12 @@ class WPSC_DTA_Export
 	private function getPurchaseData( $purchase_id )
 	{
 		global $wpdb;
-		$purchase_id = intval($purchase_id);
-		if ($purchase_id > 0) {
-			$purchase_data = $wpdb->get_results( "SELECT `value`, `form_id` FROM `".$wpdb->prefix."wpsc_submited_form_data` WHERE log_id = '".$purchase_id."' ORDER BY form_id ASC" );
-			if ( $purchase_data ) {
-				foreach ( $purchase_data AS $data ) {
-					$this->purchase_data[$data->form_id] = $data->value;
-				}
-				return true;
+		$purchase_data = $wpdb->get_results( "SELECT `value`, `form_id` FROM `".$wpdb->prefix."wpsc_submited_form_data` WHERE log_id = '".intval($purchase_id)."' ORDER BY form_id ASC" );
+		if ( $purchase_data ) {
+			foreach ( $purchase_data AS $data ) {
+				$this->purchase_data[$data->form_id] = $data->value;
 			}
+			return true;
 		}
 		return false;
 		
@@ -192,7 +189,7 @@ class WPSC_DTA_Export
 							)
 						);
 						
-						$wpdb->query( "UPDATE `".$wpdb->prefix."wpsc_purchase_logs` SET `dta_export` = 1 WHERE `id` = ".$purchase_id );
+						$wpdb->query( "UPDATE `".$wpdb->prefix."wpsc_purchase_logs` SET `dta_export` = 1 WHERE `id` = {$purchase_id}" );
 					}
 					
 					$this->error = false;
@@ -286,8 +283,8 @@ class WPSC_DTA_Export
 				<tr valign="top">
 					<th scope="row"><label for="usage"><?php _e( 'Usage', 'wpsc-dta-export' ) ?></label></th>
 					<td>
-						<input type="text" id="usage" name="usage1" value="<?php echo $options['usage'][0] ?>" size="30" maxlength="27" /><br/>
-						<input type="text" name="usage2" value="<?php echo $options['usage'][1] ?>" size="30" maxlength="27" /> <span><?php _e( 'Put here a text for the order number. Use %d as placeholder.', 'wpsc-dta-export' ) ?></span></td>
+						<input type="text" id="usage" name="usage1" value="<?php echo htmlspecialchars($options['usage'][0]) ?>" size="30" maxlength="27" /><br/>
+						<input type="text" name="usage2" value="<?php echo htmlspecialchars($options['usage'][1]) ?>" size="30" maxlength="27" /> <span><?php _e( 'Put here a text for the order number. Use %d as placeholder.', 'wpsc-dta-export' ) ?></span></td>
 				</tr>
 				</table>
 				
