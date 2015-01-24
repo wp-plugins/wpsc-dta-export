@@ -2,7 +2,7 @@
 Contributors: Kolja Schleich
 Tags: shopping cart, tickets, shop, e-commerce, stock counter, DTA
 Requires at least: 2.5
-Tested up to: 4.0.1
+Tested up to: 4.1
 Stable tag: 1.6.1
 
 Export orders from [WP E-Commerce Plugin](http://wordpress.org/extend/plugins/wp-e-commerce/) as DTA-File. This file format is used as automatic payment method in Germany.
