@@ -3,7 +3,7 @@
 Plugin Name: WPSC DTA Export
 Plugin URI: http://wordpress.org/extend/plugins/wpsc-dta-export
 Description: Export Orders from <a href="https://wordpress.org/plugins/wp-e-commerce/">Wordpress Shopping Cart</a> as DTA file. Tested with WP E-commerce 3.9
-Version: 1.6.1
+Version: 1.6.2
 Author: Kolja Schleich
 Copyright 2007-2015  Kolja Schleich  (email : kolja [dot] schleich [at] googlemail.com)
 
@@ -92,7 +92,7 @@ class WPSC_DTA_Export
 		$out = '<select size="1" name="'.$form_name.'" id="'.$form_name.'">';
 		foreach ( $this->getFormFields() AS $form_field ) {
 			$selected = ( $select == $form_field->id ) ? " selected='selected'" : '';
-			$out .= '<option value="'.$form_field->id.'"'.$selected.'>'.$form_field->name.'</option>';
+			$out .= '<option value="'.$form_field->id.'"'.$selected.'>'.stripslashes($form_field->name).'</option>';
 		}
 		$out .= '</select>';
 		return $out;
@@ -157,9 +157,9 @@ class WPSC_DTA_Export
 			foreach ( $purchase_log AS $purchase ) {
 				$purchase_id = intval($purchase->id);
 				if ( $this->getPurchaseData( $purchase_id ) ) {
-					$name = $this->purchase_data[$options['payer']['name']];
-					$bank_code = $this->purchase_data[$options['payer']['bank_code']];
-					$account_number = $this->purchase_data[$options['payer']['account_number']];
+					$name = stripslashes($this->purchase_data[$options['payer']['name']]);
+					$bank_code = intval($this->purchase_data[$options['payer']['bank_code']]);
+					$account_number = intval($this->purchase_data[$options['payer']['account_number']]);
 	
 					// replace umlaute and ß
 					$name = ereg_replace("ä","ae",$name);
@@ -219,14 +219,14 @@ class WPSC_DTA_Export
 		if ( isset($_POST['update_dta_settings']) && current_user_can( 'edit_dta_settings' ) ) {
 			check_admin_referer( 'wpsc-dta-export-update-settings_general' );
 			
-			$options['receiver']['name'] = htmlspecialchars($_POST['receiver_name']);
+			$options['receiver']['name'] = htmlspecialchars(stripslashes($_POST['receiver_name']));
 			$options['receiver']['account_number'] = intval($_POST['receiver_account_number']);
 			$options['receiver']['bank_code'] = intval($_POST['receiver_bank_code']);
 			$options['payer']['name'] = intval($_POST['payer_name']);
 			$options['payer']['bank_code'] = intval($_POST['payer_bank_code']);
 			$options['payer']['account_number'] = intval($_POST['payer_account_number']);
 			$options['payer']['iban'] = intval($_POST['payer_iban']);
-			$options['usage'] = array( htmlspecialchars($_POST['usage1']), htmlspecialchars($_POST['usage2']) );
+			$options['usage'] = array( htmlspecialchars(stripslashes($_POST['usage1'])), htmlspecialchars(stripslashes($_POST['usage2'])) );
 			
 			update_option( 'wpsc-dta-export', $options );
 	
