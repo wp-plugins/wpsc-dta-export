@@ -57,7 +57,7 @@ class WPSC_DTA_Export
 		load_plugin_textdomain( 'wpsc-dta-export', false, basename(__FILE__, '.php').'/languages' );
 		add_action( 'admin_menu', array(&$this, 'addAdminMenu') );
 		if ( function_exists('register_uninstall_hook') )
-			register_uninstall_hook(__FILE__, array(&$this, 'uninstall'));
+			register_uninstall_hook(__FILE__, array("WPSC_DTA_Export", 'uninstall'));
 			
 		$this->plugin_url = WP_PLUGIN_URL.'/'.basename(__FILE__, '.php');
 	}
