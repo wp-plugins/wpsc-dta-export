@@ -189,7 +189,7 @@ class WPSC_DTA_Export
 							)
 						);
 						
-						$wpdb->query( "UPDATE `".$wpdb->prefix."wpsc_purchase_logs` SET `dta_export` = 1 WHERE `id` = {$purchase_id}" );
+						$wpdb->query( $wpdb->prepare("UPDATE `".$wpdb->prefix."wpsc_purchase_logs` SET `dta_export` = 1 WHERE `id` = '%d'", $purchase_id) );
 					}
 					
 					$this->error = false;
