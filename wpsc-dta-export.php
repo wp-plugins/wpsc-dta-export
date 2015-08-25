@@ -3,7 +3,7 @@
 Plugin Name: WPSC DTA Export
 Plugin URI: http://wordpress.org/extend/plugins/wpsc-dta-export
 Description: Export Orders from <a href="https://wordpress.org/plugins/wp-e-commerce/">Wordpress Shopping Cart</a> as DTA file. Tested with WP E-commerce 3.9
-Version: 1.6.2
+Version: 1.6.3
 Author: Kolja Schleich
 Copyright 2007-2015  Kolja Schleich  (email : kolja [dot] schleich [at] googlemail.com)
 
@@ -242,7 +242,7 @@ class WPSC_DTA_Export
 			<h2><?php _e( 'DTA Export', 'wpsc-dta-export' ) ?></h2>
 			<form action="index.php" method="get">
 				<input type="hidden" name="export" value="dta" />
-				<p><input type="submit" value="<?php _e( 'Download DTA File', 'wpsc-dta-export' ) ?> &raquo;" class="button" /></p>
+				<p><input type="submit" value="<?php _e( 'Download DTA File', 'wpsc-dta-export' ) ?>" class="button button-primary" /></p>
 			</form>
 			<p><?php _e( 'Number of orders to export', 'wpsc-dta-export' ) ?>: <?php echo $num_to_export ?></p>
 		</div>
@@ -289,7 +289,7 @@ class WPSC_DTA_Export
 				</table>
 				
 				<input type='hidden' name='page_options' value='receiver_name,receiver_account_number,receiver_bank_code,payer_name,payer_bank_code,payer_account_number,usage' />
-				<p class="submit"><input type="submit" name="update_dta_settings" value="<?php _e( 'Save Settings', 'wpsc-dta-export' ) ?> &raquo;" class="button" /></p>
+				<p class="submit"><input type="submit" name="update_dta_settings" value="<?php _e( 'Save Settings', 'wpsc-dta-export' ) ?>" class="button button-primary" /></p>
 			</form>
 		</div>
 		<?php endif;
@@ -343,6 +343,11 @@ class WPSC_DTA_Export
 		$options['receiver']['name'] = '';
 		$options['receiver']['account_number'] = '';
 		$options['receiver']['bank_code'] = '';
+		$options['payer']['name'] = 0;
+		$options['payer']['bank_code'] = 0;
+		$options['payer']['account_number'] = 0;
+		$options['payer']['iban'] = 0;
+		$options['usage'] = array('', '');
 		
 		add_option( 'wpsc-dta-export', $options, 'DTA Export Options', 'yes' );
 		
