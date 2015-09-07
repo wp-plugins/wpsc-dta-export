@@ -36,6 +36,9 @@ The WPSC DTA Export icon is adapted from the Fugue Icons of http://www.pinvoke.c
 
 == Changelog == 
 
+= 1.6.5 =
+* BUGFIX: use esc_url() on URLs
+
 = 1.6.4 =
 * BUGFIX: small fixes
 

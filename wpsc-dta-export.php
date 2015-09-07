@@ -3,7 +3,7 @@
 Plugin Name: WPSC DTA Export
 Plugin URI: http://wordpress.org/extend/plugins/wpsc-dta-export
 Description: Export Orders from <a href="https://wordpress.org/plugins/wp-e-commerce/">Wordpress Shopping Cart</a> as DTA file. Tested with WP E-commerce 3.9
-Version: 1.6.4
+Version: 1.6.5
 Author: Kolja Schleich
 Copyright 2007-2015  Kolja Schleich  (email : kolja [dot] schleich [at] googlemail.com)
 
@@ -59,7 +59,7 @@ class WPSC_DTA_Export
 		if ( function_exists('register_uninstall_hook') )
 			register_uninstall_hook(__FILE__, array("WPSC_DTA_Export", 'uninstall'));
 			
-		$this->plugin_url = WP_PLUGIN_URL.'/'.basename(__FILE__, '.php');
+		$this->plugin_url = esc_url(WP_PLUGIN_URL.'/'.basename(__FILE__, '.php'));
 	}
 
 	
@@ -240,7 +240,7 @@ class WPSC_DTA_Export
 		?>
 		<div class="wrap narrow">
 			<h2><?php _e( 'DTA Export', 'wpsc-dta-export' ) ?></h2>
-			<form action="<?php echo admin_url() ?>" method="get">
+			<form action="<?php echo esc_url(admin_url()) ?>" method="get">
 				<input type="hidden" name="export" value="dta" />
 				<p><input type="submit" value="<?php _e( 'Download DTA File', 'wpsc-dta-export' ) ?>" class="button button-primary" /></p>
 			</form>
@@ -251,7 +251,7 @@ class WPSC_DTA_Export
 		<div class="wrap">
 			<h2><?php _e( 'Settings', 'wpsc-dta-export' ) ?></h2>
 			
-			<form action="<?php menu_page_url('wpsc-dta-export') ?>" method="post">
+			<form action="<?php esc_url(menu_page_url('wpsc-dta-export')) ?>" method="post">
 				<?php wp_nonce_field( 'wpsc-dta-export-update-settings_general' ) ?>
 				<h3><?php _e( 'Receiver', 'wpsc-dta-export' ) ?></h3>
 				<table class="form-table">
@@ -320,7 +320,7 @@ class WPSC_DTA_Export
 	 */
 	public function pluginActions( $links )
 	{
-		$settings_link = '<a href="'.admin_page_url('wpsc-dta-export', 0).'">' . __('Settings') . '</a>';
+		$settings_link = '<a href="'.esc_url(admin_page_url('wpsc-dta-export', 0)).'">' . __('Settings') . '</a>';
 		array_unshift( $links, $settings_link );
 	
 		return $links;
