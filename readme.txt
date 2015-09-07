@@ -1,9 +1,9 @@
-=== WPSC DTA Export ===
+﻿=== WPSC DTA Export ===
 Contributors: Kolja Schleich
 Tags: shopping cart, tickets, shop, e-commerce, stock counter, DTA
 Requires at least: 2.5
 Tested up to: 4.3
-Stable tag: 1.6.4
+Stable tag: 1.6.5
 
 Export orders from [WP E-Commerce Plugin](http://wordpress.org/extend/plugins/wp-e-commerce/) as DTA-File. This file format is used as automatic payment method in Germany.
 
